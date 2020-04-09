@@ -11,7 +11,9 @@ class AuthPermission
 {
     protected $permissionRoutes = [];
 
-    protected $notPermission = ['/','auth','welcome'];
+    //不需要权限控制的路由别名
+    protected $notPermission = ['/','auth','welcome','clear/cache'];
+
     /**
      * 处理请求
      *

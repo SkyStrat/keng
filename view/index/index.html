@@ -47,15 +47,15 @@
 
             <ul class="layui-nav layui-layout-right">
 
+                <!--<li class="layui-nav-item" lay-unselect>
+                    <a href="javascript:;" data-refresh="刷新" target="刷新"><i class="fa fa-refresh"></i></a>
+                </li>-->
                 <li class="layui-nav-item" lay-unselect>
-                    <a href="javascript:;" data-refresh="刷新"><i class="fa fa-refresh"></i></a>
+                    <a href="javascript:;" data-clear="清理" class="layuimini-clear" target="清理缓存"><i class="fa fa-trash-o"></i></a>
                 </li>
-                <li class="layui-nav-item" lay-unselect>
-                    <a href="javascript:;" data-clear="清理" class="layuimini-clear"><i class="fa fa-trash-o"></i></a>
-                </li>
-                <li class="layui-nav-item mobile layui-hide-xs" lay-unselect>
+                <!--<li class="layui-nav-item mobile layui-hide-xs" lay-unselect>
                     <a href="javascript:;" data-check-screen="full"><i class="fa fa-arrows-alt"></i></a>
-                </li>
+                </li>-->
                 <li class="layui-nav-item layuimini-setting">
                     <a href="javascript:;">admin</a>
                     <dl class="layui-nav-child">
@@ -135,7 +135,7 @@
 
         var options = {
             iniUrl: "<{:url('auth')}>",    // 初始化接口
-            clearUrl: "__STATIC__/layuimini/api/clear.json", // 缓存清理接口
+            clearUrl: "<{:url('clear/cache')}>", // 缓存清理接口
             urlHashLocation: true,      // 是否打开hash定位
             bgColorDefault: 0,          // 主题默认配置
             multiModule: true,          // 是否开启多模块

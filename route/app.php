@@ -46,7 +46,6 @@ Route::group('/', function() {
    Route::get('auth', 'AuthController/getMenus')->name('auth'); //获取权限
 })->middleware(AuthPermission::class);
 
-//layuimini测试页面
-Route::get('test','layuimini.menus/index');
-
-Route::get('hello/:name', 'index/hello');
+/******************* 公共路由start ********************/
+Route::get('clear/cache', 'CommonController/clearCache')->name('clear/cache'); //清理服务端缓存
+/******************* 公共路由end ********************/

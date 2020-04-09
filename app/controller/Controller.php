@@ -17,7 +17,8 @@ use think\facade\Session;
 class Controller extends BaseController
 {
     private $log;
-    private $notLogOfController = array('LoginController', 'WelcomeController');
+    //归纳不需要添加日志的控制器
+    private $notLogOfController = array('LoginController', 'WelcomeController', 'CommonController');
 
     public $userInfo;
 
