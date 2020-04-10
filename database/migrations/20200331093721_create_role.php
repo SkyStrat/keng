@@ -29,7 +29,8 @@ class CreateRole extends Migrator
     public function change()
     {
         $table = $this->table('role', array('engine'=>'InnoDB'));
-        $table->addColumn('role_name', 'string', array('length'=>15, 'default'=>'', 'null'=>false, 'comment'=>'角色名'))
+        $table->addColumn('pid', 'integer', array('default'=>0, 'null'=>false, 'comment'=>'父id'))
+            ->addColumn('role_name', 'string', array('length'=>15, 'default'=>'', 'null'=>false, 'comment'=>'角色名'))
             ->addColumn('role_permission', 'text', array('null'=>false, 'comment'=>'角色对应的权限id集'))
             ->addTimestamps()
             ->create();
