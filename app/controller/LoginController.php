@@ -28,7 +28,7 @@ class LoginController extends Controller
 
     public function loginHtml()
     {
-        return app('view')->fetch('login/login');
+        return $this->app->view->fetch('login/login');
     }
 
     public function query()

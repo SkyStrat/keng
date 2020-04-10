@@ -9,7 +9,6 @@
 namespace app\controller;
 
 use think\App;
-use think\facade\Cache;
 
 class CommonController extends Controller
 {
@@ -20,7 +19,7 @@ class CommonController extends Controller
 
     public function clearCache()
     {
-        Cache::clear();
+        $this->app->cache->clear();
         $this->result['msg'] = '服务端清理缓存成功';
         return $this->jsonResult();
     }

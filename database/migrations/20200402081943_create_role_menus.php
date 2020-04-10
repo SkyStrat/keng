@@ -31,6 +31,7 @@ class CreateRoleMenus extends Migrator
         $table = $this->table('role_menus', array('engine'=>'InnoDB'));
         $table->addColumn('role_id', 'integer', array('default'=>0, 'null'=>false, 'comment'=>'角色id'))
             ->addColumn('menus_id', 'integer', array('default'=>0, 'null'=>false, 'comment'=>'菜单id'))
+            ->addIndex('role_id')
             ->create();
     }
 }

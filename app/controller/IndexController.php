@@ -12,7 +12,7 @@ class IndexController extends Controller
 
     public function index()
     {
-        return app('view')->fetch('index/index');
+        return $this->app->view->fetch('index/index');
     }
 
 

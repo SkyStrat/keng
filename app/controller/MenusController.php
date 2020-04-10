@@ -24,7 +24,7 @@ class MenusController extends Controller
 
     public function index()
     {
-        return app('view')->fetch('menu/menu');
+        return $this->app->view->fetch('menu/menu');
     }
 
     public function queryList()

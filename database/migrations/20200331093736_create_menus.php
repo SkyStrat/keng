@@ -30,11 +30,13 @@ class CreateMenus extends Migrator
     {
         $table = $this->table('menus', array('engine'=>'InnoDB'));
         $table->addColumn('pid', 'integer', array('default'=>0, 'null'=>false, 'comment'=>'父id'))
-            ->addColumn('name', 'string', array('length'=>20, 'default'=>'', 'null'=>false, 'comment'=>'权限名称'))
-            ->addColumn('controller', 'string', array('length'=>50, 'default'=>'', 'null'=>false, 'comment'=>'控制器'))
-            ->addColumn('action', 'string', array('length'=>50, 'default'=>'', 'null'=>false, 'comment'=>'方法'))
+            ->addColumn('title', 'string', array('length'=>20, 'default'=>'', 'null'=>false, 'comment'=>'权限名称'))
             ->addColumn('sort', 'integer', array('length'=>5, 'default'=>1, 'null'=>false, 'comment'=>'排序'))
             ->addColumn('status', 'integer', array('length'=>1, 'default'=>0, 'null'=>false, 'comment'=>'状态  0：启用；1：禁用'))
+            ->addColumn('icon', 'string', array('length'=>50, 'default'=>'', 'null'=>false, 'comment'=>'图标'))
+            ->addColumn('href', 'string', array('length'=>50, 'default'=>'', 'null'=>false, 'comment'=>'路由别名'))
+            ->addColumn('target', 'string', array('length'=>15, 'default'=>'_self', 'null'=>false, 'comment'=>'iframe（使用默认值，不能改）'))
+            ->addColumn('is_menu', 'integer', array('length'=>1, 'default'=>0, 'null'=>false, 'comment'=>'是否菜单  0：菜单  1：功能'))
             ->addTimestamps()
             ->create();
     }
