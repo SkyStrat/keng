@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>menu</title>
+    <link rel="stylesheet" href="__STATIC__/layuimini/lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="__STATIC__/layuimini/css/public.css" media="all">
+    <style>
+        .layui-btn:not(.layui-btn-lg ):not(.layui-btn-sm):not(.layui-btn-xs) {
+            height: 34px;
+            line-height: 34px;
+            padding: 0 8px;
+        }
+    </style>
+</head>
+<body>
+<div class="layuimini-container">
+
+    <div class="layuimini-main">
+
+        <blockquote class="layui-elem-quote">
+            角色管理
+        </blockquote>
+
+        <div>
+            <script type="text/html" id="toolbarDemo">
+                <div class="layui-btn-container">
+                    <button class="layui-btn layui-btn-sm data-add-btn" lay-event="add"> 添加角色 </button>
+                </div>
+            </script>
+            <table id="munu-table" class="layui-table" lay-filter="munu-table"></table>
+        </div>
+    </div>
+
+    <!----------------- 角色信息弹出层start ----------------->
+    <form class="layui-form layuimini-form" id="addeditform" lay-filter="addeditform" style="display: none;margin: 10px 70px 0 5px;">
+        <input type="hidden" id="id" name="id" value="">
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="width: 80px !important;">父级角色</label>
+            <div class="layui-input-block" style="margin-left: 110px !important">
+                <select id="pidname" name="pidname" lay-filter="pidname">
+                    <option value="0" selected>无</option>
+                </select>
+                <input type="hidden" id="pid" name="pid" value="0" />
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label required" style="width: 80px !important;">角色名称</label>
+            <div class="layui-input-block" style="margin-left: 110px !important">
+                <input type="text" id="title" name="title" placeholder="请输入角色名称" value="" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="width: 80px !important;">权限选择</label>
+            <div class="layui-input-block" style="margin-left: 110px !important">
+                <input type="text" id="rule" name="rule" readonly class="layui-input" style="width: 77%;display: inline-block;">
+                <a class="layui-btn" style="height: 39px;line-height: 39px;width: 21%;" id="openRule">选择</a>
+            </div>
+        </div>
+    </form>
+    <!----------------- 角色信息弹出层end ----------------->
+
+    <!----------------- 选择权限弹出层start ----------------->
+    <div id="ruleTree" class="demo-tree-more"></div>
+    <!----------------- 选择权限弹出层end ----------------->
+</div>
+<!-- 操作列 -->
+<script type="text/html" id="auth-state">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+<script src="__STATIC__/layuimini/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+<script src="__STATIC__/layuimini/js/lay-config.js?v=1.0.4" charset="utf-8"></script>
+<script>
+    layui.use(['jquery', 'table', 'treetable', 'form', 'layer', 'tree'], function () {
+        var $ = layui.jquery;
+        var table = layui.table;
+        var treetable = layui.treetable,
+            form = layui.form,
+            layer = layui.layer,
+            tree = layui.tree;
+        var menusListChoose;
+        var checkMenusTitle = [];
+        var checkMenusId = [];
+
+        // 渲染表格
+        layer.load(2);
+        treetable.render({
+            treeColIndex: 1,
+            treeSpid: 0,
+            treeIdName: 'id',
+            treePidName: 'pid',
+            elem: '#munu-table',
+            url: '<{:url("rolelist")}>',
+            toolbar: '#toolbarDemo',
+            defaultToolbar: [],
+            page: false,
+            cols: [[
+                {type: 'numbers'},
+                {field: 'role_name', minWidth: 200, title: '角色名称'},
+                {field: 'create_time', title: '创建时间'},
+                {field: 'update_time', title: '修改时间'},
+                {templet: '#auth-state', width: 120, align: 'center', title: '操作'}
+            ]],
+            done: function () {
+                layer.closeAll('loading');
+            }
+        });
+
+        /**
+         * toolbar监听事件
+         */
+        table.on('toolbar(munu-table)', function (obj) {
+            if (obj.event === 'add') {  // 监听添加操作
+                $('#addeditform')[0].reset();
+                $('#id').val('');
+                $('#pid').val(0);
+                form.render(); //更新渲染
+
+                layer.open({
+                    btn: ['提交', '关闭'],
+                    title: '添加角色',
+                    type: 1,
+                    shade: 0.2,
+                    shadeClose: true,
+                    area: ['500px', '300px'],
+                    content: $('#addeditform'),
+                    yes: function(index, layero) {
+
+                    }
+                });
+            }
+        });
+
+        //监听工具条
+        table.on('tool(munu-table)', function (obj) {
+            var data = obj.data;
+            var layEvent = obj.event;
+
+            if (layEvent === 'del') {
+                layer.msg('删除' + data.id);
+            } else if (layEvent === 'edit') {
+                layer.msg('修改' + data.id);
+            }
+        });
+
+        $.ajax({
+            url: '<{:url("rolemenuslist")}>',
+            type: 'get',
+            success: function(res) {
+                menusListChoose = res;
+            },
+            error: function(err) {
+                layer.msg(err.statusText);
+            }
+        });
+
+        $('#openRule').click(function() {
+            //基本演示
+            tree.render({
+                elem: '#ruleTree'
+                ,data: menusListChoose
+                ,showCheckbox: true  //是否显示复选框
+                ,id: 'ruleTreeId'
+                ,isJump: false //是否允许点击节点时弹出新窗口跳转
+            });
+            layer.open({
+                btn: ['提交', '关闭'],
+                title: '选择权限',
+                type: 1,
+                shade: 0.2,
+                shadeClose: true,
+                area: ['300px', '500px'],
+                content: $('#ruleTree'),
+                yes: function(index, layero) {
+                    var checklist = tree.getChecked('ruleTreeId'); //获取选中节点的数据
+                    $.each(checklist, function(i, item) {
+                        checkMenusTitle.push(item.title);
+                        checkMenusId.push(item.id);
+                        if(item.children) {
+                            ergodic(item.children);
+                        }
+                    });
+                    console.log(checkMenusTitle);
+                    console.log(checkMenusId);
+                }
+            });
+        });
+
+        var ergodic = function(arr) {
+            $.each(arr, function(i, item) {
+                checkMenusTitle.push(item.title);
+                checkMenusId.push(item.id);
+                if(item.children) {
+                    ergodic(item.children);
+                }
+            });
+        }
+    });
+</script>
+</body>
+</html>
