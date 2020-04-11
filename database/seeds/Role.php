@@ -14,6 +14,6 @@ class Role extends Seeder
      */
     public function run()
     {
-        \app\model\Permission\Role::save(['pid'=>0, 'role_name'=>'超级管理员', 'role_permission'=>'{}']);
+        \app\model\Permission\Role::insert(['pid'=>0, 'role_name'=>'超级管理员', 'role_permission'=>'{}']);
     }
 }

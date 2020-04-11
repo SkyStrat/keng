@@ -16,6 +16,6 @@ class User extends Seeder
     {
         // faker默认语言是英文会生成英文的数据，在创建实例的时候可以指定为中文
         $faker = Faker\Factory::create('zh_CN');
-        \app\model\User\User::save(['account_id'=>1, 'account'=>'admin', 'username'=>'admin', 'sex'=>0, 'phone'=>$faker->phoneNumber, 'email'=>$faker->email, 'role_name'=>'超级管理员']);
+        \app\model\User\User::insert(['account_id'=>1, 'account'=>'admin', 'username'=>'admin', 'sex'=>0, 'phone'=>$faker->phoneNumber, 'email'=>$faker->email, 'role_name'=>'超级管理员']);
     }
 }
