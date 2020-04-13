@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>menu</title>
+    <meta name="csrf-token" content="<{:token()}>">
     <link rel="stylesheet" href="__STATIC__/layuimini/lib/layui-v2.5.5/css/layui.css" media="all">
     <link rel="stylesheet" href="__STATIC__/layuimini/css/public.css" media="all">
     <style>
@@ -61,13 +62,15 @@
     <!----------------- 角色信息弹出层end ----------------->
 
     <!----------------- 选择权限弹出层start ----------------->
-    <div id="ruleTree" class="demo-tree-more"></div>
+    <div id="ruleTree" class="demo-tree-more" style="display: none;"></div>
     <!----------------- 选择权限弹出层end ----------------->
 </div>
 <!-- 操作列 -->
 <script type="text/html" id="auth-state">
+    {{# if(d.id !== 1){ }}
     <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    {{# } }}
 </script>
 
 <script src="__STATIC__/layuimini/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
@@ -83,6 +86,8 @@
         var menusListChoose;
         var checkMenusTitle = [];
         var checkMenusId = [];
+        var checkMenusRoute = [];
+        var updateMenusList = [];
 
         // 渲染表格
         layer.load(2);
@@ -103,8 +108,26 @@
                 {field: 'update_time', title: '修改时间'},
                 {templet: '#auth-state', width: 120, align: 'center', title: '操作'}
             ]],
-            done: function () {
+            done: function (res, curr, count) {
+                var htmls = '';
+                $.each(res.data, function(i, item) {
+                    htmls += '<option value = "' + item.id + '">' + item.role_name + '</option>'
+                });
+                $('#pidname').append(htmls);
+                form.render('select'); //更新渲染下拉框
                 layer.closeAll('loading');
+            }
+        });
+
+        //获取所有菜单列表
+        $.ajax({
+            url: '<{:url("rolemenuslist")}>',
+            type: 'get',
+            success: function(res) {
+                menusListChoose = res;
+            },
+            error: function(err) {
+                layer.msg(err.statusText);
             }
         });
 
@@ -127,7 +150,7 @@
                     area: ['500px', '300px'],
                     content: $('#addeditform'),
                     yes: function(index, layero) {
-
+                        add();
                     }
                 });
             }
@@ -139,25 +162,56 @@
             var layEvent = obj.event;
 
             if (layEvent === 'del') {
-                layer.msg('删除' + data.id);
+                layer.confirm('是否删除角色：' + data.role_name, {icon: 3, title:'提示'}, function(index){
+                    $.ajax({
+                        url: '<{:url("roledelete")}>',
+                        type: 'post',
+                        data: {
+                            id: data.id,
+                            pid: data.pid
+                        },
+                        success: function(res) {
+                            if(res.code < 0) {
+                                layer.msg('操作失败');
+                            }else {
+                                layer.msg('操作成功', {time:2000,shade:0.2} ,function() {
+                                    window.location.reload();
+                                });
+                            }
+                        },
+                        error: function(err) {
+                            layer.msg(err.statusText);
+                        }
+                    });
+                });
             } else if (layEvent === 'edit') {
-                layer.msg('修改' + data.id);
-            }
-        });
+                updateMenusList = data.menus_id;
+                form.val("addeditform", {
+                    "id": data.id,
+                    "pidname": data.pid,
+                    "pid": data.pid,
+                    "title": data.role_name,
+                    "rule": data.menus_title,
+                });
+                form.render(); //更新渲染
 
-        $.ajax({
-            url: '<{:url("rolemenuslist")}>',
-            type: 'get',
-            success: function(res) {
-                menusListChoose = res;
-            },
-            error: function(err) {
-                layer.msg(err.statusText);
+                layer.open({
+                    btn: ['提交', '关闭'],
+                    title: '修改角色',
+                    type: 1,
+                    shade: 0.2,
+                    shadeClose: true,
+                    area: ['500px', '300px'],
+                    content: $('#addeditform'),
+                    yes: function(index, layero) {
+                        update();
+                    }
+                });
             }
         });
 
         $('#openRule').click(function() {
-            //基本演示
+            var id = $('#id').val();
             tree.render({
                 elem: '#ruleTree'
                 ,data: menusListChoose
@@ -165,6 +219,10 @@
                 ,id: 'ruleTreeId'
                 ,isJump: false //是否允许点击节点时弹出新窗口跳转
             });
+            if(id) {
+                //修改
+                tree.setChecked('ruleTreeId', updateMenusList);
+            }
             layer.open({
                 btn: ['提交', '关闭'],
                 title: '选择权限',
@@ -178,25 +236,117 @@
                     $.each(checklist, function(i, item) {
                         checkMenusTitle.push(item.title);
                         checkMenusId.push(item.id);
+                        if(item.href) {
+                            checkMenusRoute.push(item.href);
+                        }
                         if(item.children) {
                             ergodic(item.children);
                         }
                     });
-                    console.log(checkMenusTitle);
-                    console.log(checkMenusId);
+                    $('#rule').val(checkMenusTitle.toString());
+                    layer.close(index);
                 }
             });
         });
 
+        //递归遍历整理选中的菜单信息
         var ergodic = function(arr) {
             $.each(arr, function(i, item) {
                 checkMenusTitle.push(item.title);
                 checkMenusId.push(item.id);
+                if(item.href) {
+                    checkMenusRoute.push(item.href);
+                }
                 if(item.children) {
                     ergodic(item.children);
                 }
             });
-        }
+        };
+
+        //添加方法
+        var add = function() {
+            var title = $('#title').val();
+            if(!title) {
+                layer.msg('角色名称不能为空');
+                return;
+            }
+            if(!checkMenusId && !checkMenusTitle) {
+                layer.msg('请选择对应的权限');
+                return;
+            }
+            var param = {
+                pid: $('#pid').val(),
+                role_name: title,
+                role_permission: checkMenusRoute,
+                role_menus_id:checkMenusId
+            };
+
+            $.ajax({
+                url: '<{:url("roleadd")}>',
+                type: 'post',
+                headers:{
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: param,
+                success: function(res) {
+                    if(res.code != 0) {
+                        layer.msg('操作失败');
+                    }else {
+                        layer.msg('操作成功', {time:2000,shade:0.2} ,function() {
+                            window.location.reload(); //因为树形表格没有自动刷新功能，只能通过页面刷新来控制新token
+                        });
+                    }
+                },
+                error: function(err) {
+                    layer.msg(err.statusText);
+                }
+            });
+        };
+
+        var update = function() {
+            var id = $('#id').val();
+            var title = $('#title').val();
+            if(!id) {
+                layer.msg('提交错误');
+                return;
+            }
+            if(!title) {
+                layer.msg('角色名称不能为空');
+                return;
+            }
+            if(!checkMenusId && !checkMenusTitle) {
+                layer.msg('请选择对应的权限');
+                return;
+            }
+            var param = {
+                id: id,
+                pid: $('#pid').val(),
+                role_name: title,
+                role_permission: checkMenusRoute,
+                role_menus_id:checkMenusId
+            };
+
+            $.ajax({
+                url: '<{:url("roleupdate")}>',
+                type: 'post',
+                headers:{
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: param,
+                success: function(res) {
+                    if(res.code != 0) {
+                        layer.msg('操作失败');
+                    }else {
+                        layer.msg('操作成功', {time:2000,shade:0.2} ,function() {
+                            window.location.reload(); //因为树形表格没有自动刷新功能，只能通过页面刷新来控制新token
+                        });
+                    }
+                },
+                error: function(err) {
+                    layer.msg(err.statusText);
+                }
+            });
+        };
     });
 </script>
 </body>

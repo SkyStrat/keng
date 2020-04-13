@@ -157,22 +157,7 @@
         })*/;
 
         $('.login-out').on("click", function () {
-            $.ajax({
-                url: '<{:url("loginout")}>',
-                type: 'get',
-                success: function(res) {
-                    if(res.code < 0) {
-                        layer.msg('操作失败');
-                    }else {
-                        layer.msg('退出登录成功', {time:2000,shade:0.2} ,function() {
-                            window.location = '<{:url("loginhtml")}>';
-                        });
-                    }
-                },
-                error: function(err) {
-                    layer.msg(err.statusText);
-                }
-            });
+            window.location = '<{:url("loginout")}>';
         });
     });
 </script>

@@ -18,12 +18,12 @@ function getMenusJson($menusData)
 }
 
 //循环获取多级菜单
-function childMenus($data)
+function childMenus($data, $strchild = 'child')
 {
     $tree = array(); //格式化好的树
     foreach ($data as $key=>$item) {
         if (isset($data[$item['pid']])){
-            $data[$item['pid']]['child'][] = &$data[$key];
+            $data[$item['pid']][$strchild][] = &$data[$key];
         } else {
             $tree[] = &$data[$item['id']];
         }

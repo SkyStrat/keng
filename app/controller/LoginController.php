@@ -60,6 +60,11 @@ class LoginController extends Controller
             $this->result['message'] = '密码错误';
             return $this->jsonResult();
         }
+        if($result['role_id'] == 0) {
+            $this->result['code'] = -1;
+            $this->result['message'] = '该用户没赋予权限';
+            return $this->jsonResult();
+        }
         unset($result['password']);
 
         app('session')->set('user', $result);
@@ -69,6 +74,6 @@ class LoginController extends Controller
     public function loginOut()
     {
         app('session')->delete('user');
-        return $this->jsonResult();
+        return redirect((string)url('loginhtml'));
     }
 }

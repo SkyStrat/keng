@@ -16,6 +16,11 @@ class Role extends Model
     protected $updateTime = 'update_time'; //更新时间字段名
     protected $autoWriteTimestamp = 'timestamp'; //自动写入创建时间和更新时间
 
+    public function rolemenu()
+    {
+        return $this->hasMany(RoleMenus::class, 'role_id', 'id');
+    }
+
     public function getRolePermission($id)
     {
         $result = $this->where('id',$id)->find();

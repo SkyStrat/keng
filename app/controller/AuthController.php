@@ -29,7 +29,7 @@ class AuthController extends Controller
                 $query->field('target,href,icon,title,id,pid')->where(['status'=>0, 'is_menu'=>0]);
             }])->where(['role_id'=>$this->userInfo['role_id']])->select()->toArray();
 
-            $menus_list = array_column($result, 'menus');
+            $menus_list = array_filter(array_column($result, 'menus')); //获取菜单信息，并去掉空值
         }
 
         foreach($menus_list as $item) {

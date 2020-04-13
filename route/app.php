@@ -35,13 +35,22 @@ Route::group('/', function() {
    Route::get('layuimini/formstep','layuimini.FormController/formStepIndex')->name('layuimini/formstep');
    /******************* layuimini测试页面end ********************/
 
-   /******************* 系统设置start ********************/
+   /******************* 菜单管理start ********************/
    Route::get('menus','MenusController/index')->name('menus'); //菜单管理
    Route::get('menuslist','MenusController/queryList')->name('menuslist'); //菜单列表
    Route::post('menusadd', 'MenusController/addMenus')->name('menusadd')->token(); //菜单添加
    Route::post('menusupdate', 'MenusController/updateMenus')->name('menusupdate')->token(); //菜单修改
    Route::post('menusdelete', 'MenusController/deleteMenus')->name('menusdelete'); //菜单删除
-   /******************* 系统设置end ********************/
+   /******************* 菜单管理end ********************/
+
+   /******************* 角色管理start ********************/
+   Route::get('role', 'RoleController/index')->name('role'); //角色管理
+   Route::get('rolelist', 'RoleController/queryList')->name('rolelist'); //角色列表
+   Route::post('roleadd', 'RoleController/addRole')->name('roleadd')->token(); //角色添加
+   Route::post('roleupdate', 'RoleController/updateRole')->name('roleupdate')->token(); //角色修改
+   Route::post('roledelete', 'RoleController/deleteRole')->name('roledelete'); //角色删除
+   Route::get('rolemenuslist', 'RoleController/getAllMenus')->name('rolemenuslist'); //菜单选择器数据
+   /******************* 角色管理end ********************/
 
    Route::get('auth', 'AuthController/getMenus')->name('auth'); //获取权限
 })->middleware(AuthPermission::class);
