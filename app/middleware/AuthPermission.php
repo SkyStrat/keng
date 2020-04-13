@@ -61,7 +61,7 @@ class AuthPermission
         if($this->permissionRoutes) return $this->permissionRoutes;
 
         $userInfo = app('session')->get('user');
-        if(!$userInfo) {
+        if(!$userInfo || $userInfo['role_id'] === 0) {
             return false;
         }
 
