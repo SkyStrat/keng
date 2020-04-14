@@ -52,6 +52,15 @@ Route::group('/', function() {
    Route::get('rolemenuslist', 'RoleController/getAllMenus')->name('rolemenuslist'); //菜单选择器数据
    /******************* 角色管理end ********************/
 
+   /******************* 用户管理start ********************/
+   Route::get('user', 'UserController/index')->name('user'); //用户管理
+   Route::get('userlist', 'UserController/queryList')->name('userlist'); //用户列表
+   Route::post('useradd', 'UserController/addUser')->name('useradd')->token(); //用户添加
+   Route::post('userupdate', 'UserController/updateUser')->name('userupdate')->token(); //用户修改
+   Route::post('userdelete', 'UserController/deleteUser')->name('userdelete'); //用户删除
+   Route::post('userreload', 'UserController/reloadPassword')->name('userreload'); //重置密码
+   /******************* 用户管理end ********************/
+
    Route::get('auth', 'AuthController/getMenus')->name('auth'); //获取权限
 })->middleware(AuthPermission::class);
 
