@@ -45,17 +45,17 @@
         <form class="layui-form">
             <div>
                 <i class="layui-icon layui-icon-username admin-icon"></i>
-                <input type="text" name="account" placeholder="请输入用户名" autocomplete="off" class="layui-input admin-input admin-input-username" value="">
+                <input type="text" id="account" name="account" placeholder="请输入用户名" autocomplete="off" class="layui-input admin-input admin-input-username" value="">
             </div>
             <div>
                 <i class="layui-icon layui-icon-password admin-icon"></i>
-                <input type="password" name="password" placeholder="请输入密码" autocomplete="off" class="layui-input admin-input" value="">
+                <input type="password" id="password" name="password" placeholder="请输入密码" autocomplete="off" class="layui-input admin-input" value="">
             </div>
             <div>
-                <input type="text" name="captcha" placeholder="请输入验证码" autocomplete="off" class="layui-input admin-input admin-input-verify" value="">
+                <input type="text" id="captcha" name="captcha" placeholder="请输入验证码" autocomplete="off" class="layui-input admin-input admin-input-verify" value="">
                 <img class="admin-captcha" width="90" height="30" src="<{:captcha_src()}>" onclick="upCaptcha(this)">
             </div>
-            <button class="layui-btn admin-button" type="button" lay-submit lay-filter="login" id="login_id">登 陆</button>
+            <a class="layui-btn admin-button" id="login" style="line-height: 46px;">登 陆</a>
         </form>
     </div>
 </div>
@@ -69,22 +69,35 @@
         // 登录过期的时候，跳出ifram框架
         if (top.location != self.location) top.location = self.location;
 
-        form.on('submit(login)', function(data) {
-            data = data.field;
-            if (data.account == '') {
+        $("#login").on('click', function() {
+            loginclick();
+        });
+
+        //回车键触发登录事件
+        $(document).on('keydown', function(e) {
+            if(e.keyCode = 13) {
+                loginclick();
+            }
+        });
+
+        var loginclick = function() {
+            var account = $('#account').val();
+            var password = $('#password').val();
+            var captcha = $('#captcha').val();
+            if (account == '') {
                 layer.msg('用户名不能为空');
                 return false;
             }
-            if (data.password == '') {
+            if (password == '') {
                 layer.msg('密码不能为空');
                 return false;
             }
-            if (data.captcha == '') {
+            if (captcha == '') {
                 layer.msg('验证码不能为空');
                 return false;
             }
 
-            data.password = window.btoa(data.password); //前端加密
+            password = window.btoa(password); //前端加密
 
             $.ajax({
                 url:"<{:url('logining')}>",
@@ -93,9 +106,9 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 data:{
-                    account:data.account,
-                    password:data.password,
-                    captcha:data.captcha
+                    account:account,
+                    password:password,
+                    captcha:captcha
                 },
                 success:function(res) {
                     if(res.code != 0) {
@@ -105,13 +118,7 @@
                     }
                 }
             });
-
-            return false;   //不使用表单submit提交
-        });
-
-        /*$("#login_id").on('click', function() {
-            console.log(1);
-        });*/
+        }
     });
 
     //验证码更新

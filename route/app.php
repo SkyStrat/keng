@@ -63,6 +63,7 @@ Route::group('/', function() {
    /******************* 用户管理end ********************/
 
    Route::get('auth', 'AuthController/getMenus')->name('auth'); //获取权限
+   Route::post('updatepassword', 'LoginController/updatePassword')->name('updatepassword'); //首页修改密码
 })->middleware(AuthPermission::class);
 
 /******************* 公共路由start ********************/

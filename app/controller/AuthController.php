@@ -9,8 +9,7 @@
 namespace app\controller;
 
 use think\App;
-use app\model\Permission\Menus;
-use app\model\Permission\RoleMenus;
+use app\model\Permission\{Menus, RoleMenus};
 
 class AuthController extends Controller
 {

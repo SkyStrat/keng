@@ -11,8 +11,7 @@ namespace app\controller;
 
 use app\model\User\Account;
 use think\App;
-use think\facade\Log;
-use think\facade\Session;
+use think\exception\HttpException;
 
 class LoginController extends Controller
 {
@@ -75,5 +74,31 @@ class LoginController extends Controller
     {
         app('session')->delete('user');
         return redirect((string)url('loginhtml'));
+    }
+
+    public function updatePassword()
+    {
+        if($this->request->isPost()) {
+            $old = $this->request->post('old_password');
+            $new = $this->request->post('new_password');
+
+            $user_info = $this->app->session->get('user');
+            $password = $this->account->field(['password'])->where(['account', $user_info['account']])->find();
+            if(md5($old.$this->loginKey) === $password) {
+                $data['password'] = md5($new.$this->loginKey);
+                $result = $this->account->where(['account', $user_info['account']])->update($data);
+                if(!$result) {
+                    $this->result['code'] = -1;
+                    $this->result['message'] = "fail | 修改失败";
+                }
+            }else {
+                $this->result['code'] = -1;
+                $this->result['message'] = "fail | 原密码错误";
+            }
+
+            return $this->jsonResult();
+        }else {
+            throw new HttpException(400, 'It is not POST request');
+        }
     }
 }

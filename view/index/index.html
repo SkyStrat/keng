@@ -57,13 +57,13 @@
                     <a href="javascript:;" data-check-screen="full"><i class="fa fa-arrows-alt"></i></a>
                 </li>-->
                 <li class="layui-nav-item layuimini-setting">
-                    <a href="javascript:;">admin</a>
+                    <a href="javascript:;"><{$username}></a>
                     <dl class="layui-nav-child">
+                        <!--<dd>
+                            <a href="javascript:;" id="edituser" data-title="基本资料" data-icon="fa fa-gears">基本资料<span class="layui-badge-dot"></span></a>
+                        </dd>-->
                         <dd>
-                            <a href="javascript:;" layuimini-content-href="page/user-setting.html" data-title="基本资料" data-icon="fa fa-gears">基本资料<span class="layui-badge-dot"></span></a>
-                        </dd>
-                        <dd>
-                            <a href="javascript:;" layuimini-content-href="page/user-password.html" data-title="修改密码" data-icon="fa fa-gears">修改密码</a>
+                            <a href="javascript:;" id="updatePwd" data-title="修改密码" data-icon="fa fa-gears">修改密码</a>
                         </dd>
                         <dd>
                             <hr>
@@ -123,6 +123,23 @@
         </div>
 
     </div>
+
+    <!----------------- 修改密码start ----------------->
+    <form class="layui-form layuimini-form" id="editform" lay-filter="editform" style="display: none;margin: 10px 70px 0 5px;">
+        <div class="layui-form-item">
+            <label class="layui-form-label required" style="width: 80px !important;">原密码</label>
+            <div class="layui-input-block" style="margin-left: 110px !important">
+                <input type="password" id="old_password" name="old_password" placeholder="请输入原密码" value="" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label required" style="width: 80px !important;">新密码</label>
+            <div class="layui-input-block" style="margin-left: 110px !important">
+                <input type="password" id="new_password" name="new_password" placeholder="请输入新密码" value="" class="layui-input">
+            </div>
+        </div>
+    </form>
+    <!----------------- 添加密码end ----------------->
 </div>
 <script src="__STATIC__/layuimini/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
 <script src="__STATIC__/layuimini/js/lay-config.js?v=2.0.0" charset="utf-8"></script>
@@ -159,6 +176,55 @@
         $('.login-out').on("click", function () {
             window.location = '<{:url("loginout")}>';
         });
+
+        $('#updatePwd').click(function() {
+            layer.open({
+                btn: ['提交', '关闭'],
+                title: '修改密码',
+                type: 1,
+                shade: 0.2,
+                shadeClose: true,
+                area: ['500px', '250px'],
+                content: $('#editform'),
+                yes: function(index, layero) {
+                    updatePwd();
+                }
+            });
+        });
+
+        var updatePwd = function() {
+            var oldP = $('#old_password').val();
+            if(!oldP) {
+                layer.msg('原密码不能为空');
+                return;
+            }
+            var newP = $('#new_password').val();
+            if(!newP) {
+                layer.msg('新密码不能为空');
+                return;
+            }
+            var param = {
+                new_password: window.btoa(newP),
+                old_password: window.btoa(oldP)
+            };
+            $.ajax({
+                url: '<{:url("updatepassword")}>',
+                type: 'post',
+                data: param,
+                success: function(res) {
+                    if(res.code != 0) {
+                        layer.msg('操作失败');
+                    }else {
+                        layer.msg('修改成功，正在退出，请稍后重新登录', {time:2000, shade: 0.2}, function() {
+                            window.location = '<{:url("loginout")}>';
+                        });
+                    }
+                },
+                error: function(err) {
+                    layer.msg(err.statusText);
+                }
+            });
+        };
     });
 </script>
 </body>

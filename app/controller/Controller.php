@@ -12,7 +12,6 @@ namespace app\controller;
 use app\BaseController;
 use app\model\Log\AdminLog;
 use think\App;
-use think\facade\Session;
 
 class Controller extends BaseController
 {

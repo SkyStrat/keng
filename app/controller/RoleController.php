@@ -9,11 +9,8 @@
 namespace app\controller;
 
 
-use app\model\Permission\Menus;
-use app\model\Permission\Role;
-use app\model\Permission\RoleMenus;
-use app\model\User\Account;
-use app\model\User\User;
+use app\model\Permission\{Menus, Role, RoleMenus};
+use app\model\User\{Account, User};
 use think\App;
 use think\Exception;
 use think\exception\HttpException;

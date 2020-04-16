@@ -88,6 +88,8 @@
         var checkMenusId = [];
         var checkMenusRoute = [];
         var updateMenusList = [];
+        var selectRoleForMenusId = [];
+        var getAllMenusList = [];
 
         // 渲染表格
         layer.load(2);
@@ -112,6 +114,7 @@
                 var htmls = '';
                 $.each(res.data, function(i, item) {
                     htmls += '<option value = "' + item.id + '">' + item.role_name + '</option>'
+                    selectRoleForMenusId[item.id] = item.menus_id;
                 });
                 $('#pidname').append(htmls);
                 form.render('select'); //更新渲染下拉框
@@ -124,10 +127,38 @@
             url: '<{:url("rolemenuslist")}>',
             type: 'get',
             success: function(res) {
-                menusListChoose = res;
+                menusListChoose = getAllMenusList = res;
             },
             error: function(err) {
                 layer.msg(err.statusText);
+            }
+        });
+
+        //监听pidname下拉框
+        form.on('select(pidname)', function(data){
+            if(data.value === 1) {
+                menusListChoose = getAllMenusList;
+            }else {
+                menusListChoose = [];
+                $.each(selectRoleForMenusId[data.value], function(y, value) {
+                    $.each(getAllMenusList, function(i, item) {
+                        if(value == item.id) {
+                            if(item.children) {
+                                var param = {
+                                    id: item.id,
+                                    pid: item.pid,
+                                    title: item.title,
+                                    href: item.href,
+                                    children: []
+                                };
+                                param.children = ergodicList(item.children, selectRoleForMenusId[data.value]);
+                                menusListChoose.push(param);
+                            }else {
+                                menusListChoose.push(item);
+                            }
+                        }
+                    });
+                });
             }
         });
 
@@ -261,6 +292,30 @@
                     ergodic(item.children);
                 }
             });
+        };
+        //递归遍历整理指定的菜单列表
+        var ergodicList = function(arr, rolemenus) {
+            var child = [];
+            $.each(rolemenus, function(y, value) {
+                $.each(arr, function(i, item) {
+                    if(value == item.id) {
+                        if(item.children) {
+                            var param = {
+                                id: item.id,
+                                pid: item.pid,
+                                title: item.title,
+                                href: item.href,
+                                children: []
+                            };
+                            param.children = ergodicList(item.children, rolemenus);
+                            child.push(param);
+                        }else {
+                            child.push(item);
+                        }
+                    }
+                });
+            });
+            return child;
         };
 
         //添加方法

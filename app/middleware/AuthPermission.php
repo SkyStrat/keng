@@ -5,14 +5,13 @@ namespace app\middleware;
 
 
 use think\exception\HttpException;
-use think\facade\Log;
 
 class AuthPermission
 {
     protected $permissionRoutes = [];
 
     //不需要权限控制的路由别名
-    protected $notPermission = ['/','auth','welcome','clear/cache'];
+    protected $notPermission = ['/','auth','welcome','clear/cache','updatepassword'];
 
     /**
      * 处理请求

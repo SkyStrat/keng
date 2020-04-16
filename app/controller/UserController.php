@@ -9,8 +9,7 @@
 namespace app\controller;
 
 
-use app\model\User\Account;
-use app\model\User\User;
+use app\model\User\{Account, User};
 use think\App;
 use think\Exception;
 use think\exception\HttpException;
