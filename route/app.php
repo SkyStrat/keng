@@ -13,6 +13,7 @@ use app\middleware\AuthPermission;
 
 /**
  * 建议：路由名称与别名最好一致
+ * 注意：需要添加token的路由，注意token名称
  */
 Route::group('login', function() {
    //登录页面
@@ -38,16 +39,16 @@ Route::group('/', function() {
    /******************* 菜单管理start ********************/
    Route::get('menus','MenusController/index')->name('menus'); //菜单管理
    Route::get('menuslist','MenusController/queryList')->name('menuslist'); //菜单列表
-   Route::post('menusadd', 'MenusController/addMenus')->name('menusadd')->token(); //菜单添加
-   Route::post('menusupdate', 'MenusController/updateMenus')->name('menusupdate')->token(); //菜单修改
+   Route::post('menusadd', 'MenusController/addMenus')->name('menusadd')->token('__menutoken__'); //菜单添加
+   Route::post('menusupdate', 'MenusController/updateMenus')->name('menusupdate')->token('__menutoken__'); //菜单修改
    Route::post('menusdelete', 'MenusController/deleteMenus')->name('menusdelete'); //菜单删除
    /******************* 菜单管理end ********************/
 
    /******************* 角色管理start ********************/
    Route::get('role', 'RoleController/index')->name('role'); //角色管理
    Route::get('rolelist', 'RoleController/queryList')->name('rolelist'); //角色列表
-   Route::post('roleadd', 'RoleController/addRole')->name('roleadd')->token(); //角色添加
-   Route::post('roleupdate', 'RoleController/updateRole')->name('roleupdate')->token(); //角色修改
+   Route::post('roleadd', 'RoleController/addRole')->name('roleadd')->token('__roletoken__'); //角色添加
+   Route::post('roleupdate', 'RoleController/updateRole')->name('roleupdate')->token('__roletoken__'); //角色修改
    Route::post('roledelete', 'RoleController/deleteRole')->name('roledelete'); //角色删除
    Route::get('rolemenuslist', 'RoleController/getAllMenus')->name('rolemenuslist'); //菜单选择器数据
    /******************* 角色管理end ********************/
@@ -55,8 +56,8 @@ Route::group('/', function() {
    /******************* 用户管理start ********************/
    Route::get('user', 'UserController/index')->name('user'); //用户管理
    Route::get('userlist', 'UserController/queryList')->name('userlist'); //用户列表
-   Route::post('useradd', 'UserController/addUser')->name('useradd')->token(); //用户添加
-   Route::post('userupdate', 'UserController/updateUser')->name('userupdate')->token(); //用户修改
+   Route::post('useradd', 'UserController/addUser')->name('useradd')->token('__usertoken__'); //用户添加
+   Route::post('userupdate', 'UserController/updateUser')->name('userupdate')->token('__usertoken__'); //用户修改
    Route::post('userdelete', 'UserController/deleteUser')->name('userdelete'); //用户删除
    Route::post('userreload', 'UserController/reloadPassword')->name('userreload'); //重置密码
    /******************* 用户管理end ********************/
