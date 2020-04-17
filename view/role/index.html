@@ -90,6 +90,7 @@
         var updateMenusList = [];
         var selectRoleForMenusId = [];
         var getAllMenusList = [];
+        var user_info = JSON.parse('<{$user}>');
 
         // 渲染表格
         layer.load(2);
@@ -118,6 +119,7 @@
                 });
                 $('#pidname').append(htmls);
                 form.render('select'); //更新渲染下拉框
+                $('#pidname').attr('disabled', 'disabled'); //禁用下拉框
                 layer.closeAll('loading');
             }
         });
@@ -134,25 +136,33 @@
             }
         });
 
-        //监听pidname下拉框
-        form.on('select(pidname)', function(data){
-            if(data.value === 1 || data.value === 0) {
-                menusListChoose = getAllMenusList;
-            }else {
-                menusListChoose = [];
-                listFirst(data.value);
-            }
-        });
-
         /**
          * toolbar监听事件
          */
         table.on('toolbar(munu-table)', function (obj) {
             if (obj.event === 'add') {  // 监听添加操作
-                $('#pidname').attr('disabled', false);
                 $('#addeditform')[0].reset();
                 $('#id').val('');
-                $('#pid').val(0);
+                //判断当前用户是否是超级管理员角色
+                if(user_info.role_id != 1) {
+                    form.val("addeditform", {
+                        "pidname": user_info.role_id,
+                        "pid": user_info.role_id
+                    });
+                }else {
+                    form.val("addeditform", {
+                        "pidname": 0,
+                        "pid": 0
+                    });
+                }
+                //判断当前用户是否是超级管理员角色，如果是那么可以列出全部权限，否则只列出父级拥有的权限
+                if(user_info.role_id === 1) {
+                    menusListChoose = getAllMenusList;
+                }else {
+                    menusListChoose = [];
+                    listFirst(user_info.role_id);
+                }
+
                 form.render(); //更新渲染
 
                 layer.open({
@@ -199,17 +209,15 @@
                     });
                 });
             } else if (layEvent === 'edit') {
-                $('#pidname').attr('disabled', 'disabled'); //禁用下拉框
-
-                //重置菜单列表
+                //判断当前用户是否是超级管理员角色或没有父级的角色，如果是那么可以列出全部权限，否则只列出父级拥有的权限
                 if(data.id === 1 || data.pid === 0) {
                     menusListChoose = getAllMenusList;
                 }else {
                     menusListChoose = [];
-                    listFirst(data.id);
+                    listFirst(data.pid);
                 }
 
-                updateMenusList = data.menus_id;
+                updateMenusList = data.choose_menus_list_id;
                 form.val("addeditform", {
                     "id": data.id,
                     "pidname": data.pid,

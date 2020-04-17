@@ -14,46 +14,58 @@ use app\model\User\{Account, User};
 use think\App;
 use think\Exception;
 use think\exception\HttpException;
+use think\facade\View;
 
 class RoleController extends Controller
 {
     private $model;
+    private $user_info;
 
     public function __construct(App $app)
     {
         parent::__construct($app);
         $this->model = new Role();
+        $this->user_info = $this->app->session->get('user');
     }
 
     public function index()
     {
+        $user_info = $this->user_info;
+        unset($user_info['role']);
+        View::assign([
+            'user'=>$user_info
+        ]);
         return $this->app->view->fetch('role/index');
     }
 
     public function queryList()
     {
         $roleList = $this->model->select()->toArray();
+        if($this->user_info['role_id'] != 1) {
+            $lower_role_id = $this->getLowerRole($roleList);
+            $roleList = $this->model->where([['id', 'in', implode(',', $lower_role_id)]])->select()->toArray();
+        }
         $role_menus_model = new RoleMenus();
         $menus_model = new Menus();
 
         foreach($roleList as &$item) {
             $title = $role_menus_model->withJoin(['menus'], 'left')->field(['GROUP_CONCAT(menus.title) as title', 'GROUP_CONCAT(menus.id) as id'])->where(['role_id'=>$item['id']])->select()->toArray();
             $item['menus_title'] = $title[0]['title'];
+            $item['menus_id'] = explode(',', $title[0]['id']);
 
+            //列出对应角色已选择的权限id
             if($title[0]['id']) {
                 $where = [
                     ['id', 'in', $title[0]['id']],
                     ['pid', '<>', 0],
                     ['href', '<>', ''],
                 ];
+                $id = $menus_model->where($where)->field(['GROUP_CONCAT(id) as id'])->select()->toArray();
+                $item['choose_menus_list_id'] = explode(',', $id[0]['id']);
             }else {
-                $where = [
-                    ['pid', '<>', 0],
-                    ['href', '<>', ''],
-                ];
+
+                $item['choose_menus_list_id'] = $item['menus_id'];
             }
-            $id = $menus_model->where($where)->field(['GROUP_CONCAT(id) as id'])->select()->toArray();
-            $item['menus_id'] = explode(',', $id[0]['id']);
         }
         unset($role_menus_model, $menus_model);
 
@@ -221,5 +233,24 @@ class RoleController extends Controller
         }
 
         return json(childMenus($menusData, 'children'));
+    }
+
+    /**
+     * 获取角色及其下级角色id
+     */
+    private function getLowerRole(array $roleList): array
+    {
+        $lower_role = [];
+        array_push($lower_role, $this->user_info['role_id']);
+
+        foreach($roleList as $item) {
+            foreach($lower_role as $value) {
+                if($item['pid'] == $value) {
+                    array_push($lower_role, $item['id']);
+                }
+            }
+        }
+
+        return $lower_role;
     }
 }
