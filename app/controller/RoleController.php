@@ -34,12 +34,28 @@ class RoleController extends Controller
     {
         $roleList = $this->model->select()->toArray();
         $role_menus_model = new RoleMenus();
+        $menus_model = new Menus();
 
         foreach($roleList as &$item) {
             $title = $role_menus_model->withJoin(['menus'], 'left')->field(['GROUP_CONCAT(menus.title) as title', 'GROUP_CONCAT(menus.id) as id'])->where(['role_id'=>$item['id']])->select()->toArray();
             $item['menus_title'] = $title[0]['title'];
-            $item['menus_id'] = explode(',', $title[0]['id']);
+
+            if($title[0]['id']) {
+                $where = [
+                    ['id', 'in', $title[0]['id']],
+                    ['pid', '<>', 0],
+                    ['href', '<>', ''],
+                ];
+            }else {
+                $where = [
+                    ['pid', '<>', 0],
+                    ['href', '<>', ''],
+                ];
+            }
+            $id = $menus_model->where($where)->field(['GROUP_CONCAT(id) as id'])->select()->toArray();
+            $item['menus_id'] = explode(',', $id[0]['id']);
         }
+        unset($role_menus_model, $menus_model);
 
         $this->result['data'] = $roleList;
         return $this->jsonResult();

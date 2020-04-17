@@ -157,7 +157,7 @@
             <div class="layui-form-item">
                 <label class="layui-form-label required" style="width: 80px !important;">角色</label>
                 <div class="layui-input-block" style="margin-left: 110px !important">
-                    <select id="rolename_edit" name="rolename_edit" lay-filter="role">
+                    <select id="rolename_edit" name="rolename_edit" lay-filter="rolename_edit">
                         <option value="0">请选择</option>
                     </select>
                     <input type="hidden" id="role_edit" name="role_edit" value="0" />
@@ -333,6 +333,13 @@
                 $('#role').val(0);
             }else {
                 $('#role').val(data.value+','+data.elem[data.elem.selectedIndex].text);
+            }
+        });
+        form.on('select(rolename_edit)', function(data){
+            if(data.value == 0) {
+                $('#role_edit').val(0);
+            }else {
+                $('#role_edit').val(data.value+','+data.elem[data.elem.selectedIndex].text);
             }
         });
 
