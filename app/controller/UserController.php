@@ -17,12 +17,14 @@ use think\exception\HttpException;
 class UserController extends Controller
 {
     private $model;
+    private $user_info;
     private $arr_curd_where = ['username', 'account'];
 
     public function __construct(App $app)
     {
         parent::__construct($app);
         $this->model = new User();
+        $this->user_info = $this->app->session->get('user');
     }
 
     public function index()
@@ -41,9 +43,9 @@ class UserController extends Controller
                 !$item || $data[$key] = $item;
             }
         }
+        $data['r.pid'] =  $this->user_info['role_id'];
         $where = $this->model->buildWhere($data);
-
-        $userList = $this->model->where($where)->order('create_time', 'desc')->paginate($limit)->toArray();
+        $userList = $this->model->alias('u')->field('u.*')->where($where)->Join('role r', 'u.role_id=r.id')->order('u.create_time', 'desc')->paginate($limit)->toArray();
 
         $this->result = array_merge($this->result, $userList);
         return $this->jsonResult();
@@ -97,7 +99,6 @@ class UserController extends Controller
             'username' => $data_user['username']
         ];
         unset($data_user['role'], $data_user['account']);
-
         $this->model->startTrans(); //开启事务
         try {
             $account = new Account();
@@ -126,7 +127,6 @@ class UserController extends Controller
     {
         if($this->request->isPost()) {
             $param = $this->request->post('id');
-
             $result = $this->model->destroy($param); //主键删除适用
             if(!$result) {
                 $this->result['code'] = -1;

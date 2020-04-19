@@ -48,7 +48,7 @@ class RoleController extends Controller
         $role_menus_model = new RoleMenus();
         $menus_model = new Menus();
 
-        foreach($roleList as &$item) {
+        foreach($roleList as $key=>&$item) {
             $title = $role_menus_model->withJoin(['menus'], 'left')->field(['GROUP_CONCAT(menus.title) as title', 'GROUP_CONCAT(menus.id) as id'])->where(['role_id'=>$item['id']])->select()->toArray();
             $item['menus_title'] = $title[0]['title'];
             $item['menus_id'] = explode(',', $title[0]['id']);
