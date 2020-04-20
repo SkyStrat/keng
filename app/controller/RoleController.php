@@ -241,6 +241,7 @@ class RoleController extends Controller
     private function getLowerRole(array $roleList): array
     {
         $lower_role = [];
+
         array_push($lower_role, $this->user_info['role_id']);
 
         foreach($roleList as $item) {
@@ -250,6 +251,8 @@ class RoleController extends Controller
                 }
             }
         }
+        array_shift($lower_role); //如果不需要显示当前用户角色，请注释掉
+
 
         return $lower_role;
     }
