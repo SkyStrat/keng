@@ -19,15 +19,21 @@ class User extends Model
     protected $updateTime = 'update_time'; //更新时间字段名
     protected $autoWriteTimestamp = 'timestamp'; //自动写入创建时间和更新时间
 
-    public function buildWhere($option = [])
+    /**
+     * where条件
+     * @param array $option 数据
+     * @param string $alias 字段前缀
+     * @return array
+     */
+    public function buildWhere($option = [], $alias = '')
     {
         $where = [];
         foreach($option as $key=>$item) {
             switch($key) {
-                case 'username':
+                case $alias.'username':
                     $where[] = [$key,'like',$item.'%'];
                     break;
-                case 'account':
+                case $alias.'account':
                     $where[] = [$key,'=',$item];
                     break;
                 default:
