@@ -46,7 +46,7 @@ class LoginController extends Controller
         }
 
         $result = Account::with(['role' => function($query) {
-            $query->field(['id', 'role_name', 'role_permission']);
+            $query->field(['id', 'role_name', 'role_permission', 'pid']);
         }])->field(['account', 'role_id', 'username','password'])->where($data)->find();
 
         if(!$result) {

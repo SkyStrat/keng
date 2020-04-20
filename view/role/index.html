@@ -96,7 +96,7 @@
         layer.load(2);
         treetable.render({
             treeColIndex: 1,
-            treeSpid: 0,
+            treeSpid: (user_info.role_id == 1) ? 0 : (user_info.role_pid == 0) ? user_info.role_id : user_info.role_pid,
             treeIdName: 'id',
             treePidName: 'pid',
             elem: '#munu-table',

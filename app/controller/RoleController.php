@@ -31,6 +31,7 @@ class RoleController extends Controller
     public function index()
     {
         $user_info = $this->user_info;
+        $user_info['role_pid'] = $user_info['role']['pid'];
         unset($user_info['role']);
         View::assign([
             'user'=>$user_info
@@ -252,7 +253,6 @@ class RoleController extends Controller
             }
         }
         array_shift($lower_role); //如果不需要显示当前用户角色，请注释掉
-
 
         return $lower_role;
     }
