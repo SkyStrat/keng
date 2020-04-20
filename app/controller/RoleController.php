@@ -32,6 +32,7 @@ class RoleController extends Controller
     {
         $user_info = $this->user_info;
         $user_info['role_pid'] = $user_info['role']['pid'];
+        $user_info['role_name'] = $user_info['role']['role_name'];
         unset($user_info['role']);
         View::assign([
             'user'=>$user_info
