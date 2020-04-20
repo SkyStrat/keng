@@ -43,7 +43,11 @@ class UserController extends Controller
                 !$item || $data[$key] = $item;
             }
         }
-        $data['r.pid'] =  $this->user_info['role_id'] == 1 ? 0 : $this->user_info['role_id']; //如果是超级管理员，那它的pid便是0
+        //如果是超级管理员，则显示全部用户
+        if($this->user_info['role_id'] != 1) {
+            $data['r.pid'] =  $this->user_info['role_id'];
+        }
+
         $where = $this->model->buildWhere($data, 'u.');
         $userList = $this->model->alias('u')->field('u.*')->where($where)->Join('role r', 'u.role_id=r.id')->order('u.create_time', 'desc')->paginate($limit)->toArray();
 
