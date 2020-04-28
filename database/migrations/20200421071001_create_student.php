@@ -38,7 +38,7 @@ class CreateStudent extends Migrator
             ->addColumn('home_phone', 'string', array('length'=>50, 'default'=>'', 'null'=>false, 'comment'=>'家庭电话'))
             ->addColumn('parents', 'string', array('length'=>40, 'default'=>'', 'null'=>false, 'comment'=>'家庭成员id'))
             ->addColumn('remark', 'text', array('default'=>'', 'null'=>false, 'comment'=>'备注'))
-            ->addColumn('responsible_id', 'integer', array('default'=>0, 'null'=>false, 'comment'=>'负责人id'))
+            ->addColumn('responsible_account', 'integer', array('default'=>0, 'null'=>false, 'comment'=>'负责人帐号'))
             ->addColumn('responsible_name', 'string', array('length'=>50, 'default'=>'', 'null'=>false, 'comment'=>'负责人'))
             ->addTimestamps()
             ->create();

@@ -19,18 +19,16 @@ use think\facade\View;
 class RoleController extends Controller
 {
     private $model;
-    private $user_info;
 
     public function __construct(App $app)
     {
         parent::__construct($app);
         $this->model = new Role();
-        $this->user_info = $this->app->session->get('user');
     }
 
     public function index()
     {
-        $user_info = $this->user_info;
+        $user_info = $this->userInfo;
         $user_info['role_pid'] = $user_info['role']['pid'];
         $user_info['role_name'] = $user_info['role']['role_name'];
         unset($user_info['role']);
@@ -43,7 +41,7 @@ class RoleController extends Controller
     public function queryList()
     {
         $roleList = $this->model->select()->toArray();
-        if($this->user_info['role_id'] != 1) {
+        if($this->userInfo['role_id'] != 1) {
             $lower_role_id = $this->getLowerRole($roleList);
             $roleList = $this->model->where([['id', 'in', implode(',', $lower_role_id)]])->select()->toArray();
         }
@@ -244,7 +242,7 @@ class RoleController extends Controller
     {
         $lower_role = [];
 
-        array_push($lower_role, $this->user_info['role_id']);
+        array_push($lower_role, $this->userInfo['role_id']);
 
         foreach($roleList as $item) {
             foreach($lower_role as $value) {

@@ -17,14 +17,12 @@ use think\exception\HttpException;
 class UserController extends Controller
 {
     private $model;
-    private $user_info;
     private $arr_curd_where = ['username', 'account'];
 
     public function __construct(App $app)
     {
         parent::__construct($app);
         $this->model = new User();
-        $this->user_info = $this->app->session->get('user');
     }
 
     public function index()
@@ -44,8 +42,8 @@ class UserController extends Controller
             }
         }
         //如果是超级管理员，则显示全部用户
-        if($this->user_info['role_id'] != 1) {
-            $data['r.pid'] =  $this->user_info['role_id'];
+        if($this->userInfo['role_id'] != 1) {
+            $data['r.pid'] =  $this->userInfo['role_id'];
         }
 
         $where = $this->model->buildWhere($data, 'u.');
