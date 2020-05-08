@@ -9,6 +9,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <link rel="stylesheet" href="__STATIC__/layuimini/lib/layui-v2.5.5/css/layui.css" media="all">
     <link rel="stylesheet" href="__STATIC__/layuimini/css/public.css" media="all">
+    <style>
+        .parentsLine {
+            display: inline-flex;
+            margin-left: 10px;
+        }
+    </style>
 </head>
 <body>
 <div class="layuimini-container">
@@ -53,24 +59,12 @@
             <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>
         </script>
 
-        <!----------------- 添加用户弹出层start ----------------->
+        <!----------------- 添加学生弹出层start ----------------->
         <form class="layui-form layuimini-form" id="addform" lay-filter="addform" style="display: none;margin: 10px 70px 0 5px;">
             <div class="layui-form-item">
-                <label class="layui-form-label required" style="width: 80px !important;">帐号</label>
+                <label class="layui-form-label required" style="width: 80px !important;">学生姓名</label>
                 <div class="layui-input-block" style="margin-left: 110px !important">
-                    <input type="text" id="account" name="account" placeholder="请输入帐号" value="" class="layui-input">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label required" style="width: 80px !important;">密码</label>
-                <div class="layui-input-block" style="margin-left: 110px !important">
-                    <input type="password" id="password" name="password" placeholder="请输入密码" value="" class="layui-input">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label required" style="width: 80px !important;">用户名</label>
-                <div class="layui-input-block" style="margin-left: 110px !important">
-                    <input type="text" id="username" name="username" placeholder="请输入用户名" value="" class="layui-input">
+                    <input type="text" id="account" name="account" placeholder="请输入学生姓名" value="" class="layui-input">
                 </div>
             </div>
             <div class="layui-form-item">
@@ -82,34 +76,126 @@
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label" style="width: 80px !important;">手机号码</label>
+                <label class="layui-form-label required" style="width: 80px !important;">年龄</label>
                 <div class="layui-input-block" style="margin-left: 110px !important">
-                    <input type="text" id="phone" name="phone"  placeholder="请输入手机号码" value="" class="layui-input">
+                    <input type="password" id="text" name="password" placeholder="请输入年龄" value="" class="layui-input">
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label" style="width: 80px !important;">电子邮件</label>
+                <label class="layui-form-label required" style="width: 80px !important;">年级</label>
                 <div class="layui-input-block" style="margin-left: 110px !important">
-                    <input type="text" id="email" name="email"  placeholder="请输入电子邮件" value="" class="layui-input">
+                    <input type="text" id="username" name="username" placeholder="请输入年级" value="" class="layui-input">
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label" style="width: 80px !important;">QQ号码</label>
+                <label class="layui-form-label required" style="width: 80px !important;">班级</label>
                 <div class="layui-input-block" style="margin-left: 110px !important">
-                    <input type="text" id="qq" name="qq"  placeholder="请输入QQ号码" value="" class="layui-input">
+                    <input type="text" id="username" name="username" placeholder="请输入班级" value="" class="layui-input">
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label required" style="width: 80px !important;">角色</label>
+                <label class="layui-form-label required" style="width: 80px !important;">家庭电话</label>
                 <div class="layui-input-block" style="margin-left: 110px !important">
-                    <select id="rolename" name="rolename" lay-filter="role">
-                        <option value="0">请选择</option>
-                    </select>
-                    <input type="hidden" id="role" name="role" value="0" />
+                    <input type="text" id="username" name="username" placeholder="请输入家庭电话" value="" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required" style="width: 80px !important;">家庭住址</label>
+                <div class="layui-input-block" style="margin-left: 110px !important">
+                    <input type="text" id="username" name="username" placeholder="请输入家庭住址" value="" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block" style="margin-left: 65px !important">
+                    <div class="layui-card" style="box-shadow: 0 1px 2px 0 rgba(0,0,0,1);">
+                        <div class="layui-card-header" style="border-bottom: 1px solid #989898;">家庭成员</div>
+                        <div class="layui-card-body">
+                            <div class="layui-collapse">
+                                <div class="layui-colla-item" id="home1">
+                                    <h2 class="layui-colla-title">家庭成员1<i class="layui-icon" style="position: absolute;right: 20px;z-index:9999;" onclick="closecolla(this)">&#x1006;</i></h2>
+                                    <div class="layui-colla-content layui-show">
+                                        <div class="parentsLine layui-form-item">
+                                            <div class="layui-input-block" style="margin-left: 0px !important;width: 120px;">
+                                                <input type="text" id="account" name="account" placeholder="请输入学生姓名" value="" class="layui-input">
+                                            </div>
+                                        </div>
+                                        <div class="parentsLine layui-form-item">
+                                            <div class="layui-input-block" style="margin-left: 0px !important;width: 120px;">
+                                                <select id="rolename_edit" name="rolename_edit" lay-filter="rolename_edit">
+                                                    <option value="0">请选择与学生的关系</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="parentsLine layui-form-item">
+                                            <div class="layui-input-block" style="margin-left: 0px !important;width: 120px;">
+                                                <input type="text" id="account" name="account" placeholder="请输入手机号码" value="" class="layui-input">
+                                            </div>
+                                        </div>
+                                        <div class="parentsLine layui-form-item">
+                                            <div class="layui-input-block" style="margin-left: 0px !important;width: 120px;">
+                                                <input type="text" id="account" name="account" placeholder="请输入微信号" value="" class="layui-input">
+                                            </div>
+                                        </div>
+                                        <div class="parentsLine layui-form-item">
+                                            <div class="layui-input-block" style="margin-left: 0px !important;width: 120px;">
+                                                <input type="text" id="account" name="account" placeholder="请输入QQ号" value="" class="layui-input">
+                                            </div>
+                                        </div>
+                                        <div class="parentsLine layui-form-item">
+                                            <div class="layui-input-block" style="margin-left: 0px !important;width: 120px;">
+                                                <input type="text" id="account" name="account" placeholder="请输入备注" value="" class="layui-input">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-colla-item" id="home2">
+                                    <h2 class="layui-colla-title">家庭成员2<i class="layui-icon" style="position: absolute;right: 20px;z-index:9999;" onclick="closecolla(this)">&#x1006;</i></h2>
+                                    <div class="layui-colla-content layui-show">
+                                        <div class="parentsLine layui-form-item">
+                                            <div class="layui-input-block" style="margin-left: 0px !important;width: 120px;">
+                                                <input type="text" id="account" name="account" placeholder="请输入学生姓名" value="" class="layui-input">
+                                            </div>
+                                        </div>
+                                        <div class="parentsLine layui-form-item">
+                                            <div class="layui-input-block" style="margin-left: 0px !important;width: 120px;">
+                                                <select id="rolename_edit" name="rolename_edit" lay-filter="rolename_edit">
+                                                    <option value="0">请选择与学生的关系</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="parentsLine layui-form-item">
+                                            <div class="layui-input-block" style="margin-left: 0px !important;width: 120px;">
+                                                <input type="text" id="account" name="account" placeholder="请输入手机号码" value="" class="layui-input">
+                                            </div>
+                                        </div>
+                                        <div class="parentsLine layui-form-item">
+                                            <div class="layui-input-block" style="margin-left: 0px !important;width: 120px;">
+                                                <input type="text" id="account" name="account" placeholder="请输入微信号" value="" class="layui-input">
+                                            </div>
+                                        </div>
+                                        <div class="parentsLine layui-form-item">
+                                            <div class="layui-input-block" style="margin-left: 0px !important;width: 120px;">
+                                                <input type="text" id="account" name="account" placeholder="请输入QQ号" value="" class="layui-input">
+                                            </div>
+                                        </div>
+                                        <div class="parentsLine layui-form-item">
+                                            <div class="layui-input-block" style="margin-left: 0px !important;width: 120px;">
+                                                <input type="text" id="account" name="account" placeholder="请输入备注" value="" class="layui-input">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="margin-top: 10px;text-align: center;">
+                                <a class="layui-btn layui-btn-sm">新增条目</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </form>
-        <!----------------- 添加用户弹出层end ----------------->
+        <!----------------- 添加学生弹出层end ----------------->
 
         <!----------------- 修改用户弹出层start ----------------->
         <form class="layui-form layuimini-form" id="editform" lay-filter="editform" style="display: none;margin: 10px 70px 0 5px;">
@@ -166,16 +252,17 @@
 </div>
 <script src="__STATIC__/layuimini/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
 <script>
-    layui.use(['jquery', 'form', 'table', 'layer'], function () {
+    layui.use(['jquery', 'form', 'table', 'layer', 'element'], function () {
         var $ = layui.jquery,
             form = layui.form,
             table = layui.table,
-            layer = layui.layer;
+            layer = layui.layer,
+            element = layui.element;
         var batch_delete = [];
 
         table.render({
             elem: '#currentTableId',
-            url: '<{:url("userlist")}>',
+            url: '<{:url("studentlist")}>',
             toolbar: '#toolbarDemo',
             defaultToolbar: [],
             parseData: function(res){ //res 即为原始返回的数据
@@ -188,8 +275,10 @@
             },
             cols: [[
                 {type: "checkbox", width: 50, fixed: "left"},
-                {field: 'account', width: 80, title: '帐号'},
-                {field: 'username', width: 80, title: '用户名'},
+                {field: 'grade', width: 80, title: '年级'},
+                {field: 'class', width: 80, title: '班级'},
+                {field: 'student_id', width: 80, title: '学号'},
+                {field: 'name', width: 80, title: '姓名'},
                 {field: 'sex', width: 80, title: '性别', templet: function(d) {
                     if(d.sex == 0) {
                         return '男';
@@ -197,10 +286,11 @@
                         return '女';
                     }
                 }},
-                {field: 'phone', width: 120, title: '手机号码'},
-                {field: 'email', width: 120, title: '电子邮件'},
-                {field: 'qq', width: 120, title: 'QQ号码'},
-                {field: 'role_name', width: 120, title: '角色权限'},
+                {field: 'age', width: 80, title: '年龄'},
+                {field: 'home_phone', width: 80, title: '家庭电话'},
+                {field: 'address', width: 80, title: '家庭住址'},
+                {field: 'responsible_name', width: 80, title: '负责老师'},
+                {field: 'remark', width: 80, title: '备注'},
                 {title: '操作', minWidth: 50, templet: '#currentTableBar', fixed: "right", align: "center"}
             ]],
             limits: [10, 15, 20, 25, 50, 100],
@@ -254,7 +344,7 @@
                     type: 1,
                     shade: 0.2,
                     shadeClose: true,
-                    area: ['500px', '600px'],
+                    area: ['700px', '600px'],
                     content: $('#addform'),
                     yes: function(index, layero) {
                         add(index);
@@ -516,6 +606,10 @@
             return true;
         };
     });
+
+    function closecolla(elm) {
+        console.log(elm);
+    }
 </script>
 <script>
 

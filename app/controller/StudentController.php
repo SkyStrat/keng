@@ -29,12 +29,12 @@ class StudentController extends Controller
 
     public function queryList()
     {
-        $page = $this->request->get('page',1);
+        /*$page = $this->request->get('page',1);
         $limit = $this->request->get('limit', 15);
 
         $list = $this->model->where(['responsible_account', $this->userInfo['account']])->order(['create_time'])->paginate($limit)->toArray();
 
-        $this->result = array_merge($this->result, $list);
+        $this->result = array_merge($this->result, $list);*/
         return $this->jsonResult();
     }
 }
