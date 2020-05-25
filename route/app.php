@@ -64,7 +64,10 @@ Route::group('/', function() {
 
    /******************* 学生基本信息管理start ********************/
    Route::get('student', 'StudentController/index')->name('student'); //学生基本信息管理
-   Route::get('student', 'StudentController/queryList')->name('studentlist'); //学生列表
+   Route::get('studentlist', 'StudentController/queryList')->name('studentlist'); //学生列表
+   Route::post('studentadd', 'StudentController/addStudent')->name('studentadd')->token('__studenttoken__'); //学生添加
+   Route::post('studentupdate', 'StudentController/updateStudent')->name('studentupdate')->token('__studenttoken__'); //学生修改
+   Route::post('studentdelete', 'StudentController/deleteStudent')->name('studentdelete'); //学生删除
    /******************* 学生基本信息管理end ********************/
 
    Route::get('auth', 'AuthController/getMenus')->name('auth'); //获取权限

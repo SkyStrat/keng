@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>layui</title>
-    <meta name="csrf-token" content="<{:token('__usertoken__')}>">
+    <meta name="csrf-token" content="<{:token('__studenttoken__')}>">
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -26,15 +26,15 @@
                 <form class="layui-form layui-form-pane" action="">
                     <div class="layui-form-item">
                         <div class="layui-inline">
-                            <label class="layui-form-label">用户帐号</label>
+                            <label class="layui-form-label">学号</label>
                             <div class="layui-input-inline">
-                                <input type="text" id="s_account" autocomplete="off" class="layui-input">
+                                <input type="text" id="s_student_no" autocomplete="off" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <label class="layui-form-label">用户名</label>
+                            <label class="layui-form-label">学生名字</label>
                             <div class="layui-input-inline">
-                                <input type="text" id="s_username" autocomplete="off" class="layui-input">
+                                <input type="text" id="s_student_name" autocomplete="off" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-inline">
@@ -57,14 +57,21 @@
         <script type="text/html" id="currentTableBar">
             <a class="layui-btn layui-btn-xs data-count-edit" lay-event="edit">编辑</a>
             <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>
+            {{# if(d.status == 0){ }}
+            <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit">在读</a>
+            {{# }else if(d.status == 1){ }}
+            <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit">毕业</a>
+            <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit">转学</a>
+            {{# } }}
         </script>
 
         <!----------------- 添加学生弹出层start ----------------->
         <form class="layui-form layuimini-form" id="addform" lay-filter="addform" style="display: none;margin: 10px 70px 0 5px;">
+            <a style="display: none;" id="b_submit" lay-submit lay-filter="b_submit"></a>
             <div class="layui-form-item">
                 <label class="layui-form-label required" style="width: 80px !important;">学生姓名</label>
                 <div class="layui-input-block" style="margin-left: 110px !important">
-                    <input type="text" id="account" name="account" placeholder="请输入学生姓名" value="" class="layui-input">
+                    <input type="text" name="name" placeholder="请输入学生姓名" lay-verify="required" value="" class="layui-input">
                 </div>
             </div>
             <div class="layui-form-item">
@@ -72,37 +79,36 @@
                 <div class="layui-input-block" style="margin-left: 110px !important">
                     <input type="radio" name="sex" value="0" title="男" checked="" lay-filter="sex">
                     <input type="radio" name="sex" value="1" title="女" lay-filter="sex">
-                    <input type="hidden" id="sex" name="sex_hidden" value="0" />
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label required" style="width: 80px !important;">年龄</label>
+                <label class="layui-form-label" style="width: 80px !important;">年龄</label>
                 <div class="layui-input-block" style="margin-left: 110px !important">
-                    <input type="password" id="text" name="password" placeholder="请输入年龄" value="" class="layui-input">
+                    <input type="text" name="age" placeholder="请输入年龄" value="" class="layui-input">
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label required" style="width: 80px !important;">年级</label>
                 <div class="layui-input-block" style="margin-left: 110px !important">
-                    <input type="text" id="username" name="username" placeholder="请输入年级" value="" class="layui-input">
+                    <input type="text" name="grade" placeholder="请输入年级" lay-verify="required" value="" class="layui-input">
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label required" style="width: 80px !important;">班级</label>
                 <div class="layui-input-block" style="margin-left: 110px !important">
-                    <input type="text" id="username" name="username" placeholder="请输入班级" value="" class="layui-input">
+                    <input type="text" name="class" placeholder="请输入班级" lay-verify="required" value="" class="layui-input">
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label required" style="width: 80px !important;">家庭电话</label>
                 <div class="layui-input-block" style="margin-left: 110px !important">
-                    <input type="text" id="username" name="username" placeholder="请输入家庭电话" value="" class="layui-input">
+                    <input type="text" name="home_phone" placeholder="请输入家庭电话" lay-verify="required" value="" class="layui-input">
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label required" style="width: 80px !important;">家庭住址</label>
+                <label class="layui-form-label required" style="width: 80px !important;">现居住地址</label>
                 <div class="layui-input-block" style="margin-left: 110px !important">
-                    <input type="text" id="username" name="username" placeholder="请输入家庭住址" value="" class="layui-input">
+                    <input type="text" name="address" placeholder="请输入家庭住址" lay-verify="required" value="" class="layui-input">
                 </div>
             </div>
             <div class="layui-form-item">
@@ -110,77 +116,47 @@
                     <div class="layui-card" style="box-shadow: 0 1px 2px 0 rgba(0,0,0,1);">
                         <div class="layui-card-header" style="border-bottom: 1px solid #989898;">家庭成员</div>
                         <div class="layui-card-body">
-                            <div class="layui-collapse">
-                                <div class="layui-colla-item" id="home1">
+                            <div class="layui-collapse" id="colla_list">
+                                <div class="layui-colla-item" id="home0">
                                     <h2 class="layui-colla-title">家庭成员1<i class="layui-icon" style="position: absolute;right: 20px;z-index:9999;" onclick="closecolla(this)">&#x1006;</i></h2>
                                     <div class="layui-colla-content layui-show">
                                         <div class="parentsLine layui-form-item">
                                             <div class="layui-input-block" style="margin-left: 0px !important;width: 120px;">
-                                                <input type="text" id="account" name="account" placeholder="请输入学生姓名" value="" class="layui-input">
+                                                <input type="text" name="parent_name[0]" placeholder="请输入家长姓名" lay-verify="required" value="" class="layui-input">
                                             </div>
                                         </div>
                                         <div class="parentsLine layui-form-item">
                                             <div class="layui-input-block" style="margin-left: 0px !important;width: 120px;">
-                                                <select id="rolename_edit" name="rolename_edit" lay-filter="rolename_edit">
+                                                <select name="parent_relation[0]" lay-verify="required">
                                                     <option value="0">请选择与学生的关系</option>
+                                                    <option value="1">父亲</option>
+                                                    <option value="2">母亲</option>
+                                                    <option value="3">爷爷</option>
+                                                    <option value="4">奶奶</option>
+                                                    <option value="5">外婆</option>
+                                                    <option value="6">外公</option>
+                                                    <option value="7">其他(备注描述)</option>
                                                 </select>
                                             </div>
                                         </div>
                                         <div class="parentsLine layui-form-item">
                                             <div class="layui-input-block" style="margin-left: 0px !important;width: 120px;">
-                                                <input type="text" id="account" name="account" placeholder="请输入手机号码" value="" class="layui-input">
+                                                <input type="text" name="parent_phone[0]" placeholder="请输入手机号码" lay-verify="required|phone" value="" class="layui-input">
                                             </div>
                                         </div>
                                         <div class="parentsLine layui-form-item">
                                             <div class="layui-input-block" style="margin-left: 0px !important;width: 120px;">
-                                                <input type="text" id="account" name="account" placeholder="请输入微信号" value="" class="layui-input">
+                                                <input type="text" name="parent_wx[0]" placeholder="请输入微信号" value="" class="layui-input">
                                             </div>
                                         </div>
                                         <div class="parentsLine layui-form-item">
                                             <div class="layui-input-block" style="margin-left: 0px !important;width: 120px;">
-                                                <input type="text" id="account" name="account" placeholder="请输入QQ号" value="" class="layui-input">
+                                                <input type="text" name="parent_qq[0]" placeholder="请输入QQ号" value="" class="layui-input">
                                             </div>
                                         </div>
                                         <div class="parentsLine layui-form-item">
                                             <div class="layui-input-block" style="margin-left: 0px !important;width: 120px;">
-                                                <input type="text" id="account" name="account" placeholder="请输入备注" value="" class="layui-input">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="layui-colla-item" id="home2">
-                                    <h2 class="layui-colla-title">家庭成员2<i class="layui-icon" style="position: absolute;right: 20px;z-index:9999;" onclick="closecolla(this)">&#x1006;</i></h2>
-                                    <div class="layui-colla-content layui-show">
-                                        <div class="parentsLine layui-form-item">
-                                            <div class="layui-input-block" style="margin-left: 0px !important;width: 120px;">
-                                                <input type="text" id="account" name="account" placeholder="请输入学生姓名" value="" class="layui-input">
-                                            </div>
-                                        </div>
-                                        <div class="parentsLine layui-form-item">
-                                            <div class="layui-input-block" style="margin-left: 0px !important;width: 120px;">
-                                                <select id="rolename_edit" name="rolename_edit" lay-filter="rolename_edit">
-                                                    <option value="0">请选择与学生的关系</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="parentsLine layui-form-item">
-                                            <div class="layui-input-block" style="margin-left: 0px !important;width: 120px;">
-                                                <input type="text" id="account" name="account" placeholder="请输入手机号码" value="" class="layui-input">
-                                            </div>
-                                        </div>
-                                        <div class="parentsLine layui-form-item">
-                                            <div class="layui-input-block" style="margin-left: 0px !important;width: 120px;">
-                                                <input type="text" id="account" name="account" placeholder="请输入微信号" value="" class="layui-input">
-                                            </div>
-                                        </div>
-                                        <div class="parentsLine layui-form-item">
-                                            <div class="layui-input-block" style="margin-left: 0px !important;width: 120px;">
-                                                <input type="text" id="account" name="account" placeholder="请输入QQ号" value="" class="layui-input">
-                                            </div>
-                                        </div>
-                                        <div class="parentsLine layui-form-item">
-                                            <div class="layui-input-block" style="margin-left: 0px !important;width: 120px;">
-                                                <input type="text" id="account" name="account" placeholder="请输入备注" value="" class="layui-input">
+                                                <input type="text" name="parent_remark[0]" placeholder="请输入备注" value="" class="layui-input">
                                             </div>
                                         </div>
                                     </div>
@@ -188,7 +164,7 @@
                             </div>
 
                             <div style="margin-top: 10px;text-align: center;">
-                                <a class="layui-btn layui-btn-sm">新增条目</a>
+                                <a class="layui-btn layui-btn-sm" id="addcolla">新增条目</a>
                             </div>
                         </div>
                     </div>
@@ -197,18 +173,14 @@
         </form>
         <!----------------- 添加学生弹出层end ----------------->
 
-        <!----------------- 修改用户弹出层start ----------------->
+        <!----------------- 修改学生弹出层start ----------------->
         <form class="layui-form layuimini-form" id="editform" lay-filter="editform" style="display: none;margin: 10px 70px 0 5px;">
+            <a style="display: none;" id="c_submit" lay-submit lay-filter="c_submit"></a>
             <div class="layui-form-item">
-                <label class="layui-form-label required" style="width: 80px !important;">帐号</label>
+                <label class="layui-form-label required" style="width: 80px !important;">学生姓名</label>
                 <div class="layui-input-block" style="margin-left: 110px !important">
-                    <input type="text" id="account_edit" name="account_edit" readonly="readonly" class="layui-input">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label required" style="width: 80px !important;">用户名</label>
-                <div class="layui-input-block" style="margin-left: 110px !important">
-                    <input type="text" id="username_edit" name="username_edit" placeholder="请输入用户名" value="" class="layui-input">
+                    <input type="text" name="name" placeholder="请输入学生姓名" lay-verify="required" value="" class="layui-input">
+                    <input type="hidden" name="id" value="">
                 </div>
             </div>
             <div class="layui-form-item">
@@ -216,38 +188,55 @@
                 <div class="layui-input-block" style="margin-left: 110px !important">
                     <input type="radio" name="sex" value="0" title="男" checked="" lay-filter="sex">
                     <input type="radio" name="sex" value="1" title="女" lay-filter="sex">
-                    <input type="hidden" id="sex_edit" name="sex_hidden" value="0" />
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label" style="width: 80px !important;">手机号码</label>
+                <label class="layui-form-label" style="width: 80px !important;">年龄</label>
                 <div class="layui-input-block" style="margin-left: 110px !important">
-                    <input type="text" id="phone_edit" name="phone_edit"  placeholder="请输入手机号码" value="" class="layui-input">
+                    <input type="text" name="age" placeholder="请输入年龄" value="" class="layui-input">
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label" style="width: 80px !important;">电子邮件</label>
+                <label class="layui-form-label required" style="width: 80px !important;">年级</label>
                 <div class="layui-input-block" style="margin-left: 110px !important">
-                    <input type="text" id="email_edit" name="email_edit"  placeholder="请输入电子邮件" value="" class="layui-input">
+                    <input type="text" name="grade" placeholder="请输入年级" lay-verify="required" value="" class="layui-input">
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label" style="width: 80px !important;">QQ号码</label>
+                <label class="layui-form-label required" style="width: 80px !important;">班级</label>
                 <div class="layui-input-block" style="margin-left: 110px !important">
-                    <input type="text" id="qq_edit" name="qq_edit"  placeholder="请输入QQ号码" value="" class="layui-input">
+                    <input type="text" name="class" placeholder="请输入班级" lay-verify="required" value="" class="layui-input">
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label required" style="width: 80px !important;">角色</label>
+                <label class="layui-form-label required" style="width: 80px !important;">家庭电话</label>
                 <div class="layui-input-block" style="margin-left: 110px !important">
-                    <select id="rolename_edit" name="rolename_edit" lay-filter="rolename_edit">
-                        <option value="0">请选择</option>
-                    </select>
-                    <input type="hidden" id="role_edit" name="role_edit" value="0" />
+                    <input type="text" name="home_phone" placeholder="请输入家庭电话" lay-verify="required" value="" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required" style="width: 80px !important;">现居住地址</label>
+                <div class="layui-input-block" style="margin-left: 110px !important">
+                    <input type="text" name="address" placeholder="请输入家庭住址" lay-verify="required" value="" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block" style="margin-left: 65px !important">
+                    <div class="layui-card" style="box-shadow: 0 1px 2px 0 rgba(0,0,0,1);">
+                        <div class="layui-card-header" style="border-bottom: 1px solid #989898;">家庭成员</div>
+                        <div class="layui-card-body">
+                            <div class="layui-collapse" id="colla_list_edit">
+                            </div>
+
+                            <div style="margin-top: 10px;text-align: center;">
+                                <a class="layui-btn layui-btn-sm" id="addcolla_edit">新增条目</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </form>
-        <!----------------- 添加用户弹出层end ----------------->
+        <!----------------- 添加学生弹出层end ----------------->
     </div>
 </div>
 <script src="__STATIC__/layuimini/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
@@ -259,6 +248,7 @@
             layer = layui.layer,
             element = layui.element;
         var batch_delete = [];
+        var collanum = 0;
 
         table.render({
             elem: '#currentTableId',
@@ -277,8 +267,8 @@
                 {type: "checkbox", width: 50, fixed: "left"},
                 {field: 'grade', width: 80, title: '年级'},
                 {field: 'class', width: 80, title: '班级'},
-                {field: 'student_id', width: 80, title: '学号'},
-                {field: 'name', width: 80, title: '姓名'},
+                {field: 'student_no', width: 80, title: '学号'},
+                {field: 'name', width: 120, title: '姓名'},
                 {field: 'sex', width: 80, title: '性别', templet: function(d) {
                     if(d.sex == 0) {
                         return '男';
@@ -287,41 +277,33 @@
                     }
                 }},
                 {field: 'age', width: 80, title: '年龄'},
-                {field: 'home_phone', width: 80, title: '家庭电话'},
-                {field: 'address', width: 80, title: '家庭住址'},
-                {field: 'responsible_name', width: 80, title: '负责老师'},
+                {field: 'home_phone', width: 150, title: '家庭电话'},
+                {field: 'address', width: 180, title: '家庭住址'},
+                {field: 'status', width: 80, title: '状态', templet: function(d) {
+                        if(d.status == 0) {
+                            return '入学中';
+                        }else if(d.status == 1){
+                            return '在读';
+                        }else if(d.status == 2) {
+                            return '毕业';
+                        }else if(d.status == 3) {
+                            return '转学';
+                        }
+                    }},
+                {field: 'responsible_name', width: 120, title: '负责老师'},
                 {field: 'remark', width: 80, title: '备注'},
-                {title: '操作', minWidth: 50, templet: '#currentTableBar', fixed: "right", align: "center"}
+                {title: '操作', minWidth: 180, templet: '#currentTableBar', fixed: "right", align: "center"}
             ]],
             limits: [10, 15, 20, 25, 50, 100],
             limit: 15,
             page: true
         });
 
-        //角色下拉框
-        $.ajax({
-            url: '<{:url("rolelist")}>',
-            type: 'get',
-            success: function(res) {
-                var datalist = res.data;
-                var htmls = '';
-                for(var x in datalist){
-                    htmls += '<option value = "' + datalist[x].id + '">' + datalist[x].role_name + '</option>'
-                }
-                $('#rolename').append(htmls);
-                $('#rolename_edit').append(htmls);
-                form.render('select'); //更新渲染下拉框
-            },
-            error: function(err) {
-                layer.msg(err.statusText);
-            }
-        });
-
         // 搜索操作
         $('#search').click(function(d) {
             var param = {
-                account: $('#s_account').val(),
-                username: $('#s_username').val()
+                student_no: $('#s_student_no').val(),
+                name: $('#s_student_name').val()
             };
             table.reload('currentTableId', {
                 where: param
@@ -334,10 +316,8 @@
         table.on('toolbar(currentTableFilter)', function (obj) {
             if (obj.event === 'add') {  // 监听添加操作
                 $('#addform')[0].reset();
-                $('#role').val(0);
-                $('#sex').val(0);
                 form.render(); //更新渲染
-
+                collanum = 0;
                 layer.open({
                     btn: ['提交', '关闭'],
                     title: '添加用户',
@@ -347,7 +327,8 @@
                     area: ['700px', '600px'],
                     content: $('#addform'),
                     yes: function(index, layero) {
-                        add(index);
+                        $('#b_submit').click();
+                        layer.close(index);
                     }
                 });
             } else if (obj.event === 'delete') {  // 监听删除操作
@@ -355,12 +336,8 @@
                 var str = '';
                 batch_delete = [];
                 $.each(checkStatus.data, function(i, item) {
-                    if(item.id == 1) {
-                        layer.msg('不允许删除admin');
-                        return;
-                    }
                     batch_delete.push(item.id);
-                    str += item.username+",";
+                    str += item.name+",";
                 });
                 str = str.substring(0,str.length-1);
                 layer.confirm('是否删除用户：'+str, function (index) {
@@ -373,188 +350,103 @@
         table.on('tool(currentTableFilter)', function (obj) {
             var data = obj.data;
             if (obj.event === 'edit') {
+                $('#editform')[0].reset();
                 form.val("editform", {
-                    "account_edit": data.account,
-                    "username_edit": data.username,
+                    "id" : data.id,
+                    "name": data.name,
                     "sex": data.sex,
-                    "sex_hidden": data.sex,
-                    "phone_edit": data.phone,
-                    "email_edit": data.email,
-                    "qq_edit": data.qq,
-                    "rolename_edit": data.role_id,
-                    "role_edit": data.role_id+","+data.role_name
+                    "age": data.age,
+                    "grade": data.grade,
+                    "class": data.class,
+                    "home_phone": data.home_phone,
+                    "address": data.address
                 });
+                updateshow(data.parents);
                 form.render(); //更新渲染
+                element.init(); //初始化layui组件
                 layer.open({
                     btn: ['提交', '关闭'],
                     title: '修改用户',
                     type: 1,
                     shade: 0.2,
                     shadeClose: true,
-                    area: ['500px', '600px'],
+                    area: ['700px', '600px'],
                     content: $('#editform'),
                     yes: function(index, layero) {
-                        update(index, data.account, data.id);
+                        $('#c_submit').click();
+                        layer.close(index);
                     }
                 });
             } else if (obj.event === 'delete') {
-                if(data.id == 1) {
-                    layer.msg('不允许删除admin');
-                    return;
-                }
                 batch_delete = [data.id];
-                layer.confirm('是否删除用户：'+data.username, function (index) {
+                layer.confirm('是否删除用户：'+data.name, function (index) {
                     deleted(batch_delete);
                     layer.close(index);
                 });
-            } else if(obj.event === 'reload') {
-                layer.confirm('是否重置密码为123456', function (index) {
-                    reloadPwd(data.id);
-                    layer.close(index);
-                });
-            }
-        });
-
-        form.on('select(role)', function(data){
-            if(data.value == 0) {
-                $('#role').val(0);
-            }else {
-                $('#role').val(data.value+','+data.elem[data.elem.selectedIndex].text);
-            }
-        });
-        form.on('select(rolename_edit)', function(data){
-            if(data.value == 0) {
-                $('#role_edit').val(0);
-            }else {
-                $('#role_edit').val(data.value+','+data.elem[data.elem.selectedIndex].text);
             }
         });
 
         //添加方法
-        var add = function(index) {
-            //简单验证
-            var account = $('#account').val();
-            if(!account) {
-                layer.msg('请输入帐号');
-                return;
-            }
-            var password = $('#password').val();
-            if(!password) {
-                layer.msg('请输入密码');
-                return;
-            }
-            var username = $('#username').val();
-            if(!username) {
-                layer.msg('请输入用户名');
-                return;
-            }
-            var role = $('#role').val();
-            if(role == 0) {
-                layer.msg('请选择角色');
-                return;
-            }
-            //正则验证
-            var phone = $('#phone').val();
-            var email = $('#email').val();
-            if(!checkForm(phone, email)) {
-                return;
-            }
-
-            var param = {
-                account: account,
-                password: window.btoa(password),
-                username: username,
-                sex: $('#sex').val(),
-                phone: phone,
-                email: email,
-                qq: $('#qq').val(),
-                role: role,
-            };
+        form.on('submit(b_submit)', function(data) {
             $.ajax({
-                url: '<{:url("useradd")}>',
+                url: '<{:url("studentadd")}>',
                 type: 'post',
                 headers:{
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
-                data: param,
+                data: data.field,
                 success: function(res) {
-                    $('meta[name="csrf-token"]').attr('content', res.data); //刷新令牌
+                    $('meta[name="csrf-token"]').attr('content', res.token); //刷新令牌
                     if(res.code < 0) {
                         layer.msg('操作失败');
                     }else {
                         layer.msg('操作成功');
                         table.reload('currentTableId'); //表格重载
-                        layer.close(index);
                     }
                 },
                 error: function(err) {
                     layer.msg(err.statusText);
                 }
             });
-        };
+            return false;
+        });
+
         //修改方法
-        var update = function(index, account, id) {
-            //简单验证
-            var username = $('#username_edit').val();
-            if(!username) {
-                layer.msg('请输入用户名');
-                return;
-            }
-            var role = $('#role_edit').val();
-            if(role == 0) {
-                layer.msg('请选择角色');
-                return;
-            }
-            //正则验证
-            var phone = $('#phone_edit').val();
-            var email = $('#email_edit').val();
-            if(!checkForm(phone, email)) {
-                return;
-            }
-
-            var param = {
-                id: id,
-                account: account,
-                username: username,
-                sex: $('#sex_edit').val(),
-                phone: phone,
-                email: email,
-                qq: $('#qq_edit').val(),
-                role: role,
-            };
+        form.on('submit(c_submit)', function(data) {
             $.ajax({
-                url: '<{:url("userupdate")}>',
+                url: '<{:url("studentupdate")}>',
                 type: 'post',
                 headers:{
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
-                data: param,
+                data: data.field,
                 success: function(res) {
-                    $('meta[name="csrf-token"]').attr('content', res.data); //刷新令牌
+                    $('meta[name="csrf-token"]').attr('content', res.token); //刷新令牌
                     if(res.code < 0) {
                         layer.msg('操作失败');
                     }else {
                         layer.msg('操作成功');
                         table.reload('currentTableId'); //表格重载
-                        layer.close(index);
                     }
                 },
                 error: function(err) {
                     layer.msg(err.statusText);
                 }
             });
-        };
+            return false;
+        });
+
         //删除方法
         var deleted = function(id) {
             if(!id) {
-                layer.msg('请选中用户进行删除');
+                layer.msg('请选中学生进行删除');
                 return;
             }
             var param = {
                 id: id
             };
             $.ajax({
-                url: '<{:url("userdelete")}>',
+                url: '<{:url("studentdelete")}>',
                 type: 'post',
                 data: param,
                 success: function(res) {
@@ -570,46 +462,90 @@
                 }
             });
         };
-        //重置密码
-        var reloadPwd = function(id) {
-            var param = {
-                id: id,
-                password: window.btoa('123456')
-            };
-            $.ajax({
-                url: '<{:url("userreload")}>',
-                type: 'post',
-                data: param,
-                success: function(res) {
-                    if(res.code < 0) {
-                        layer.msg('操作失败');
-                    }else {
-                        layer.msg('操作成功');
-                        table.reload('currentTableId'); //表格重载
-                    }
-                },
-                error: function(err) {
-                    layer.msg(err.statusText);
+
+        $('#addcolla').click(function() {
+            var data = form.val("addform"); //获取之前填好的数据
+            addentry('colla_list');
+            element.init(); //初始化layui组件
+            form.render(); //表单初始化
+            form.val("addform", data); //把之前已经记录好的数据返填上去
+        });
+
+        $('#addcolla_edit').click(function() {
+            var data = form.val("editform"); //获取之前填好的数据
+            addentry('colla_list_edit');
+            element.init(); //初始化layui组件
+            form.render(); //表单初始化
+            form.val("editform", data); //把之前已经记录好的数据返填上去
+        });
+
+        //增加家庭成员条目
+        var addentry = function(id_elm) {
+            collanum += 1;
+            var html_code = '<div class="layui-colla-item" lay-accordion id="home'+collanum+'">';
+            html_code += '<h2 class="layui-colla-title">家庭成员'+(collanum+1)+'<i class="layui-icon" style="position: absolute;right: 20px;z-index:9999;" onclick="closecolla(this)">&#x1006;</i></h2>';
+            html_code += '<div class="layui-colla-content layui-show">';
+            html_code += '<div class="parentsLine layui-form-item"><div class="layui-input-block" style="margin-left: 0px !important;width: 120px;"><input type="text" name="parent_name['+collanum+']" placeholder="请输入家长姓名" lay-verify="required" value="" class="layui-input"></div></div>';
+            html_code += '<div class="parentsLine layui-form-item"><div class="layui-input-block" style="margin-left: 0px !important;width: 120px;"><select name="parent_relation['+collanum+']" lay-verify="required"><option value="0">请选择与学生的关系</option><option value="1">父亲</option><option value="2">母亲</option><option value="3">爷爷</option><option value="4">奶奶</option><option value="5">外婆</option><option value="6">外公</option><option value="7">其他(备注描述)</option></select></div></div>'
+            html_code += '<div class="parentsLine layui-form-item"><div class="layui-input-block" style="margin-left: 0px !important;width: 120px;"><input type="text" name="parent_phone['+collanum+']" placeholder="请输入手机号码" lay-verify="required|phone" value="" class="layui-input"></div></div>';
+            html_code += '<div class="parentsLine layui-form-item"><div class="layui-input-block" style="margin-left: 0px !important;width: 120px;"><input type="text" name="parent_wx['+collanum+']" placeholder="请输入微信号" value="" class="layui-input"></div></div>';
+            html_code += '<div class="parentsLine layui-form-item"><div class="layui-input-block" style="margin-left: 0px !important;width: 120px;"><input type="text" name="parent_qq['+collanum+']" placeholder="请输入QQ号" value="" class="layui-input"></div></div>';
+            html_code += '<div class="parentsLine layui-form-item"><div class="layui-input-block" style="margin-left: 0px !important;width: 120px;"><input type="text" name="parent_remark['+collanum+']" placeholder="请输入备注" value="" class="layui-input"></div></div>';
+
+            if(id_elm == 'colla_list_edit') {
+                html_code += '<input type="hidden" name="parent_id['+collanum+']" value="0" />';
+            }
+
+            html_code += '</div>';
+            html_code += '</div>';
+
+            $('#'+id_elm)[0].innerHTML += html_code;
+        };
+
+        //展示家庭成员条目
+        var updateshow = function(data) {
+            $('#colla_list_edit')[0].innerHTML = '';
+            var html_code = '';
+            collanum = 0;
+            $.each(data, function(i, item) {
+                html_code += '<div class="layui-colla-item" lay-accordion id="home'+collanum+'">';
+                html_code += '<h2 class="layui-colla-title">家庭成员'+(collanum+1)+'<i class="layui-icon" style="position: absolute;right: 20px;z-index:9999;" onclick="closecolla(this)">删除</i></h2>';
+                html_code += '<div class="layui-colla-content layui-show">';
+                html_code += '<div class="parentsLine layui-form-item"><div class="layui-input-block" style="margin-left: 0px !important;width: 120px;"><input type="text" name="parent_name['+collanum+']" placeholder="请输入家长姓名" lay-verify="required" value="'+item.name+'" class="layui-input"></div></div>';
+                if(item.relation_child == 1) {
+                    html_code += '<div class="parentsLine layui-form-item"><div class="layui-input-block" style="margin-left: 0px !important;width: 120px;"><select name="parent_relation['+collanum+']" lay-verify="required"><option value="0">请选择与学生的关系</option><option value="1" selected>父亲</option><option value="2">母亲</option><option value="3">爷爷</option><option value="4">奶奶</option><option value="5">外婆</option><option value="6">外公</option><option value="7">其他(备注描述)</option></select></div></div>';
+                }else if(item.relation_child == 2) {
+                    html_code += '<div class="parentsLine layui-form-item"><div class="layui-input-block" style="margin-left: 0px !important;width: 120px;"><select name="parent_relation['+collanum+']" lay-verify="required"><option value="0">请选择与学生的关系</option><option value="1">父亲</option><option value="2" selected>母亲</option><option value="3">爷爷</option><option value="4">奶奶</option><option value="5">外婆</option><option value="6">外公</option><option value="7">其他(备注描述)</option></select></div></div>';
+                }else if(item.relation_child == 3) {
+                    html_code += '<div class="parentsLine layui-form-item"><div class="layui-input-block" style="margin-left: 0px !important;width: 120px;"><select name="parent_relation['+collanum+']" lay-verify="required"><option value="0">请选择与学生的关系</option><option value="1">父亲</option><option value="2">母亲</option><option value="3" selected>爷爷</option><option value="4">奶奶</option><option value="5">外婆</option><option value="6">外公</option><option value="7">其他(备注描述)</option></select></div></div>';
+                }else if(item.relation_child == 4) {
+                    html_code += '<div class="parentsLine layui-form-item"><div class="layui-input-block" style="margin-left: 0px !important;width: 120px;"><select name="parent_relation['+collanum+']" lay-verify="required"><option value="0">请选择与学生的关系</option><option value="1">父亲</option><option value="2">母亲</option><option value="3">爷爷</option><option value="4" selected>奶奶</option><option value="5">外婆</option><option value="6">外公</option><option value="7">其他(备注描述)</option></select></div></div>';
+                }else if(item.relation_child == 5) {
+                    html_code += '<div class="parentsLine layui-form-item"><div class="layui-input-block" style="margin-left: 0px !important;width: 120px;"><select name="parent_relation['+collanum+']" lay-verify="required"><option value="0">请选择与学生的关系</option><option value="1">父亲</option><option value="2">母亲</option><option value="3">爷爷</option><option value="4">奶奶</option><option value="5" selected>外婆</option><option value="6">外公</option><option value="7">其他(备注描述)</option></select></div></div>';
+                }else if(item.relation_child == 6) {
+                    html_code += '<div class="parentsLine layui-form-item"><div class="layui-input-block" style="margin-left: 0px !important;width: 120px;"><select name="parent_relation['+collanum+']" lay-verify="required"><option value="0">请选择与学生的关系</option><option value="1">父亲</option><option value="2">母亲</option><option value="3">爷爷</option><option value="4">奶奶</option><option value="5">外婆</option><option value="6" selected>外公</option><option value="7">其他(备注描述)</option></select></div></div>';
+                }else if(item.relation_child == 7) {
+                    html_code += '<div class="parentsLine layui-form-item"><div class="layui-input-block" style="margin-left: 0px !important;width: 120px;"><select name="parent_relation['+collanum+']" lay-verify="required"><option value="0">请选择与学生的关系</option><option value="1">父亲</option><option value="2">母亲</option><option value="3">爷爷</option><option value="4">奶奶</option><option value="5">外婆</option><option value="6">外公</option><option value="7" selected>其他(备注描述)</option></select></div></div>';
+                }else {
+                    html_code += '<div class="parentsLine layui-form-item"><div class="layui-input-block" style="margin-left: 0px !important;width: 120px;"><select name="parent_relation['+collanum+']" lay-verify="required"><option value="0">请选择与学生的关系</option><option value="1">父亲</option><option value="2">母亲</option><option value="3">爷爷</option><option value="4">奶奶</option><option value="5">外婆</option><option value="6">外公</option><option value="7">其他(备注描述)</option></select></div></div>';
                 }
+                html_code += '<div class="parentsLine layui-form-item"><div class="layui-input-block" style="margin-left: 0px !important;width: 120px;"><input type="text" name="parent_phone['+collanum+']" placeholder="请输入手机号码" lay-verify="required|phone" value="'+item.phone+'" class="layui-input"></div></div>';
+                html_code += '<div class="parentsLine layui-form-item"><div class="layui-input-block" style="margin-left: 0px !important;width: 120px;"><input type="text" name="parent_wx['+collanum+']" placeholder="请输入微信号" value="'+item.wechat+'" class="layui-input"></div></div>';
+                html_code += '<div class="parentsLine layui-form-item"><div class="layui-input-block" style="margin-left: 0px !important;width: 120px;"><input type="text" name="parent_qq['+collanum+']" placeholder="请输入QQ号" value="'+item.QQ+'" class="layui-input"></div></div>';
+                html_code += '<div class="parentsLine layui-form-item"><div class="layui-input-block" style="margin-left: 0px !important;width: 120px;"><input type="text" name="parent_remark['+collanum+']" placeholder="请输入备注" value="'+item.remark+'" class="layui-input"><input type="hidden" name="parent_id['+collanum+']" value="'+item.id+'" /></div></div>';
+                html_code += '</div>';
+                html_code += '</div>';
+                collanum++;
             });
-        };
-        //验证方法
-        var checkForm = function(phone, email) {
-            if(phone && !(/^1[3456789]\d{9}$/.test(phone))){
-                layer.msg('手机号码错误');
-                return false;
-            }
-            if(email && !(/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(email))) {
-                layer.msg('电子邮箱错误');
-                return false;
-            }
-            return true;
-        };
+            collanum--;
+            $('#colla_list_edit')[0].innerHTML += html_code;
+        }
     });
 
     function closecolla(elm) {
-        console.log(elm);
+        elm.parentNode.parentNode.remove();
     }
+
 </script>
 <script>
 

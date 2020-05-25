@@ -77,15 +77,20 @@ class UserController extends Controller
 
             if($result1 && $result2) {
                 $this->model->commit();
+            }else {
+                $this->model->rollback();
+                $this->result['code'] = -1;
+                $this->result['message'] = '添加失败:'.$this->model->getLastSql().'-----'.$account->getLastSql();
             }
             unset($account); //清除资源
-            $this->result['data'] = $this->request->buildToken();
+
+            $this->refreshToken(); //刷新令牌
             return $this->jsonResult();
-        } catch(Exception $e) {
+        } catch(\Exception $e) {
             $this->model->rollback();
             $this->result['code'] = -1;
-            $this->result['message'] = 'fail | 数据回滚';
-            $this->result['data'] = $this->request->buildToken();
+            $this->result['message'] = 'code:'.$e->getCode().'------message:'.$e->getMessage();
+            $this->refreshToken(); //刷新令牌
             return $this->jsonResult();
         }
 
@@ -110,17 +115,21 @@ class UserController extends Controller
             $data_user['role_id'] = $role_arr[0];
             $result2 = $this->model->where(['id'=>$data_user['id']])->update($data_user);
 
-            if($result2) {
+            if($result1>=0 && $result2>=0) {
                 $this->model->commit();
+            }else {
+                $this->model->rollback();
+                $this->result['code'] = -1;
+                $this->result['message'] = '修改失败:'.$this->model->getLastSql().'-----'.$account->getLastSql();
             }
             unset($account); //清除资源
-            $this->result['data'] = $this->request->buildToken();
+            $this->refreshToken(); //刷新令牌
             return $this->jsonResult();
-        } catch(Exception $e) {
+        } catch(\Exception $e) {
             $this->model->rollback();
             $this->result['code'] = -1;
-            $this->result['message'] = 'fail | 数据回滚';
-            $this->result['data'] = $this->request->buildToken();
+            $this->result['message'] = 'code:'.$e->getCode().'------message:'.$e->getMessage();
+            $this->refreshToken(); //刷新令牌
             return $this->jsonResult();
         }
     }
@@ -157,5 +166,10 @@ class UserController extends Controller
         }else {
             throw new HttpException(400, 'It is not POST request');
         }
+    }
+
+    private function refreshToken()
+    {
+        return $this->result['token'] = $this->request->buildToken('__usertoken__');
     }
 }

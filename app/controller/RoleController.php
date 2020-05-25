@@ -99,14 +99,14 @@ class RoleController extends Controller
             }else {
                 $this->model->rollback();
                 $this->result['code'] = -1;
-                $this->result['message'] = 'fail';
+                $this->result['message'] = '添加失败';
             }
             unset($role_menus_model); //清除资源
             return $this->jsonResult();
-        }catch(Exception $e) {
+        }catch(\Exception $e) {
             $this->model->rollback();
             $this->result['code'] = -1;
-            $this->result['message'] = $e->getMessage();
+            $this->result['message'] = 'code:'.$e->getCode().'-----message:'.$e->getMessage();
             return $this->jsonResult();
         }
     }
@@ -145,14 +145,14 @@ class RoleController extends Controller
             }else {
                 $this->model->rollback();
                 $this->result['code'] = -1;
-                $this->result['message'] = 'fail';
+                $this->result['message'] = '修改失败';
             }
             unset($role_menus_model); //清除资源
             return $this->jsonResult();
         } catch(Exception $e) {
             $this->model->rollback();
             $this->result['code'] = -1;
-            $this->result['message'] = $e->getMessage();
+            $this->result['message'] = 'code:'.$e->getCode().'-----message:'.$e->getMessage();
             return $this->jsonResult();
         }
     }
@@ -254,5 +254,10 @@ class RoleController extends Controller
         array_shift($lower_role); //如果不需要显示当前用户角色，请注释掉
 
         return $lower_role;
+    }
+
+    private function refreshToken()
+    {
+        return $this->result['token'] = $this->request->buildToken('__roletoken__');
     }
 }

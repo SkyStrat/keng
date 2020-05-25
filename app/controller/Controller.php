@@ -48,6 +48,7 @@ class Controller extends BaseController
                 'admin_user_id'=>app('session')->get('user')['id'] ?? 0
             ]);
         }
+
         return json($this->result);
     }
 }
