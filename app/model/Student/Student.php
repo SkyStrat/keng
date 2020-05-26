@@ -49,6 +49,14 @@ class Student extends Model
         return $where;
     }
 
+    /**
+     * @param $grade string
+     * @param $class string
+     * @return array|null|Model
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
     public function getStudentNo($grade, $class)
     {
         return $this->field('student_no')->where(['grade'=>$grade,'class'=>$class])->order('student_no','desc')->find();

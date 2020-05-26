@@ -58,10 +58,10 @@
             <a class="layui-btn layui-btn-xs data-count-edit" lay-event="edit">编辑</a>
             <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>
             {{# if(d.status == 0){ }}
-            <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit">在读</a>
+            <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="studying">在读</a>
             {{# }else if(d.status == 1){ }}
-            <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit">毕业</a>
-            <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit">转学</a>
+            <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="graduation">毕业</a>
+            <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="transfer">转学</a>
             {{# } }}
         </script>
 
@@ -237,6 +237,22 @@
             </div>
         </form>
         <!----------------- 添加学生弹出层end ----------------->
+
+        <!----------------- 入学状态选择负责老师弹出层start ----------------->
+        <form class="layui-form layuimini-form" id="entranceStatusForm" lay-filter="entranceStatusForm" style="display: none;margin: 10px 70px 0 5px;">
+            <div class="layui-form-item">
+                <label class="layui-form-label required">负责老师</label>
+                <div class="layui-input-block">
+                    <select name="responsible" lay-verify="required" lay-filter="responsibleSelect">
+                        <option value="">请选择负责老师</option>
+                        <{foreach $teacher as $value}>
+                        <option value="<{$value['account']}>-<{$value['username']}>"><{$value['username']}></option>
+                        <{/foreach}>
+                    </select>
+                </div>
+            </div>
+        </form>
+        <!----------------- 入学状态选择负责老师弹出层end----------------->
     </div>
 </div>
 <script src="__STATIC__/layuimini/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
@@ -249,6 +265,8 @@
             element = layui.element;
         var batch_delete = [];
         var collanum = 0;
+        var responsibleSelectData = '';
+        var batch_teacher_id = [];
 
         table.render({
             elem: '#currentTableId',
@@ -292,7 +310,7 @@
                     }},
                 {field: 'responsible_name', width: 120, title: '负责老师'},
                 {field: 'remark', width: 80, title: '备注'},
-                {title: '操作', minWidth: 180, templet: '#currentTableBar', fixed: "right", align: "center"}
+                {title: '操作', minWidth: 230, templet: '#currentTableBar', fixed: "right", align: "center"}
             ]],
             limits: [10, 15, 20, 25, 50, 100],
             limit: 15,
@@ -347,6 +365,7 @@
             }
         });
 
+        /*行尾操作按钮触发方法*/
         table.on('tool(currentTableFilter)', function (obj) {
             var data = obj.data;
             if (obj.event === 'edit') {
@@ -383,7 +402,38 @@
                     deleted(batch_delete);
                     layer.close(index);
                 });
+            } else if (obj.event === 'studying') { //在读状态改变
+                batch_teacher_id = [data.id];
+                layer.open({
+                    btn: ['提交', '关闭'],
+                    title: '选择负责老师',
+                    type: 1,
+                    shade: 0.2,
+                    shadeClose: true,
+                    area: ['500px', '250px'],
+                    content: $('#entranceStatusForm'),
+                    yes: function(index, layero) {
+                        updateStatus(batch_teacher_id, obj.event);
+                        layer.close(index);
+                    }
+                });
+            } else if (obj.event === 'graduation') { //毕业状态改变
+                batch_teacher_id = [data.id];
+                layer.confirm('是否改变用户状态为毕业：'+data.name, function (index) {
+                    updateStatus(batch_teacher_id, obj.event);
+                    layer.close(index);
+                });
+            } else if (obj.event === 'transfer') { //转学状态改变
+                batch_teacher_id = [data.id];
+                layer.confirm('是否改变用户状态为转学：'+data.name, function (index) {
+                    updateStatus(batch_teacher_id, obj.event);
+                    layer.close(index);
+                });
             }
+        });
+
+        form.on('select(responsibleSelect)', function(data){
+            responsibleSelectData = data.value;
         });
 
         //添加方法
@@ -447,6 +497,50 @@
             };
             $.ajax({
                 url: '<{:url("studentdelete")}>',
+                type: 'post',
+                data: param,
+                success: function(res) {
+                    if(res.code < 0) {
+                        layer.msg('操作失败');
+                    }else {
+                        layer.msg('操作成功');
+                        table.reload('currentTableId'); //表格重载
+                    }
+                },
+                error: function(err) {
+                    layer.msg(err.statusText);
+                }
+            });
+        };
+
+        var updateStatus = function(id,type) {
+            if(!id) {
+                layer.msg('请选中学生进行删除');
+                return;
+            }
+            var param = {};
+            if(type === 'studying' && responsibleSelectData) {
+                param = {
+                    id: id,
+                    type: type,
+                    teacher_info: responsibleSelectData
+                }
+            }else if(type === 'graduation') {
+                param = {
+                    id: id,
+                    type: type
+                }
+            }else if(type === 'transfer') {
+                param = {
+                    id: id,
+                    type: type
+                }
+            }else {
+                layer.msg('系统错误！');
+                return;
+            }
+            $.ajax({
+                url: '<{:url("studentstatus")}>',
                 type: 'post',
                 data: param,
                 success: function(res) {

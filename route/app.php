@@ -68,6 +68,7 @@ Route::group('/', function() {
    Route::post('studentadd', 'StudentController/addStudent')->name('studentadd')->token('__studenttoken__'); //学生添加
    Route::post('studentupdate', 'StudentController/updateStudent')->name('studentupdate')->token('__studenttoken__'); //学生修改
    Route::post('studentdelete', 'StudentController/deleteStudent')->name('studentdelete'); //学生删除
+   Route::post('studentstatus', 'StudentController/statusStudent')->name('studentstatus'); //学生状态修改
    /******************* 学生基本信息管理end ********************/
 
    Route::get('auth', 'AuthController/getMenus')->name('auth'); //获取权限

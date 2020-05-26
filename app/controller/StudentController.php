@@ -9,10 +9,11 @@
 namespace app\controller;
 
 
-use app\model\Student\Parents;
-use app\model\Student\Student;
+use app\model\Student\{Parents,Student,StudentOld};
+use app\model\User\User;
 use think\App;
 use think\exception\HttpException;
+use think\facade\View;
 
 class StudentController extends Controller
 {
@@ -26,11 +27,27 @@ class StudentController extends Controller
         $this->model = new Student();
     }
 
+    /**
+     * @return mixed
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
     public function index()
     {
+        $user_model = new User();
+        $info = $user_model->getTeacherRoleUser('account,username');
+        View::assign([
+            'teacher' => $info
+        ]);
+        unset($user_model); //清理资源
         return $this->app->view->fetch('student/index');
     }
 
+    /**
+     * @return \think\response\Json
+     * @throws \think\db\exception\DbException
+     */
     public function queryList()
     {
         $page = $this->request->get('page',1);
@@ -44,12 +61,20 @@ class StudentController extends Controller
         }
         $where = $this->model->buildWhere($data);
 
-        $list = $this->model->with(['parents'])->whereOr('responsible_account',$this->userInfo['account'])->whereOr('responsible_account','')->where($where)->order(['create_time'])->paginate($limit)->toArray();
+        $list = $this->model->with(['parents'])->where(function($query) {
+            $query->whereOr('responsible_account',$this->userInfo['account'])->whereOr('responsible_account','');
+        })->where($where)->where([['status','in','0,1']])->order(['create_time'])->paginate($limit)->toArray();
 
         $this->result = array_merge($this->result, $list);
         return $this->jsonResult();
     }
 
+    /**
+     * @return \think\response\Json
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
     public function addStudent()
     {
         $data_student = $this->request->param();
@@ -105,6 +130,12 @@ class StudentController extends Controller
         return $this->jsonResult();
     }
 
+    /**
+     * @return \think\response\Json
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
     public function updateStudent()
     {
         $data_student = $this->request->param();
@@ -196,21 +227,93 @@ class StudentController extends Controller
         return $this->jsonResult();
     }
 
+    /**
+     * @return \think\response\Json
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
     public function deleteStudent()
     {
         if($this->request->isPost()) {
             $param = $this->request->post('id');
-            $result = $this->model->destroy($param); //主键删除适用
-            if(!$result) {
-                $this->result['code'] = -1;
-                $this->result['message'] = 'fail | '.$result;
-            }
+            $this->transfer($param, 'deleted'); //转移操作
+
             return $this->jsonResult();
         }else {
             throw new HttpException(400, 'It is not POST request');
         }
     }
 
+    /**
+     * @return \think\response\Json
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    public function statusStudent()
+    {
+        if($this->request->isPost()) {
+            $param_id = $this->request->post('id');
+            $param_type = $this->request->post('type');
+            $is_str = !is_array($param_id) ?: implode(',', $param_id);
+
+            if($param_type == 'studying') {
+                $param_teacher = $this->request->post('teacher_info');
+
+                $teacher_arr = explode('-',$param_teacher);
+                $result = $this->model->where([['id','in',$is_str]])->update(['responsible_account'=>$teacher_arr[0], 'responsible_name'=>$teacher_arr[1], 'status'=>1]);
+            }else {
+                $this->transfer($param_id, $param_type); //转移操作
+            }
+
+            return $this->jsonResult();
+        }else {
+            throw new HttpException(400, 'It is not POST request');
+        }
+    }
+
+    /**
+     * 把被删除，毕业，转学的学生信息转移到历史记录表里
+     * @param $param array|string 学生id
+     * @param $type string 类型
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    private function transfer($param,$type)
+    {
+        $id_str = !is_array($param) ?: implode(',',$param);
+        $student_info = $this->model->field('id,name,sex,age,grade,class,address,home_phone,remark,responsible_account,responsible_name')->where([['id','in',$id_str]])->select()->toArray();
+
+        $this->model->startTrans(); //开启事务
+        try {
+            $result = $this->model->destroy($param); //主键删除适用
+
+            foreach ($student_info as $value) {
+                $id = $value['id'];unset($value['id']); //去除id
+                $value['status'] = $type == 'deleted' ? 3 : $type == 'graduation' ? 1 : 2;
+                $value['create_account'] = $this->userInfo['account'];
+                $value['create_name'] =$this->userInfo['username'];
+                $result2 = StudentOld::create($value); //数据移到历史学生表
+
+                $parent_data['student_id_old'] = $result2->id;
+                $result3 = Parents::where(['student_id'=>$id])->update($parent_data); //更新家长表id
+            }
+
+            if($result && $result2 && $result3>=0) {
+                $this->model->commit();
+            }
+        }catch (\Exception $e) {
+            $this->model->rollback();
+            $this->result['code'] = -1;
+            $this->result['message'] = 'code:'.$e->getCode().'-----message:'.$e->getMessage();
+        }
+    }
+
+    /**
+     * @return string
+     */
     private function refreshToken()
     {
         return $this->result['token'] = $this->request->buildToken('__studenttoken__');

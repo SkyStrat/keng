@@ -43,4 +43,17 @@ class User extends Model
 
         return $where;
     }
+
+    /**
+     * 返回老师用户
+     * @param string $field 指定返回的字段集
+     * @return \think\Collection
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    public function getTeacherRoleUser($field = '*')
+    {
+        return $this->field($field)->where(['type'=>1])->select();
+    }
 }
