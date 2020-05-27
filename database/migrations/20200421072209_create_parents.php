@@ -29,14 +29,14 @@ class CreateParents extends Migrator
     public function change()
     {
         $table = $this->table('parents', array('engine'=>'InnoDB'));
-        $table->addColumn('student_id', 'int', array('default'=>0, 'null'=>false, 'comment'=>'学生id'))
-            ->addColumn('student_id_old', 'int', array('default'=>0, 'null'=>false, 'comment'=>'旧学生id'))
+        $table->addColumn('student_id', 'integer', array('default'=>0, 'null'=>false, 'comment'=>'学生id'))
+            ->addColumn('student_id_old', 'integer', array('default'=>0, 'null'=>false, 'comment'=>'旧学生id'))
             ->addColumn('name', 'string', array('length'=>50, 'default'=>'', 'null'=>false, 'comment'=>'家庭成员名字'))
             ->addColumn('relation_child', 'integer', array('length'=>1, 'default'=>0, 'null'=>false, 'comment'=>'与学生之间的关系  1爸爸 2妈妈 3爷爷 4奶奶 5外婆 6外公 7其他(请在备注中说明)'))
             ->addColumn('phone', 'string', array('length'=>11, 'default'=>0, 'null'=>false, 'comment'=>'手机号码'))
             ->addColumn('wechat', 'string', array('length'=>50, 'default'=>'', 'null'=>false, 'comment'=>'微信号'))
             ->addColumn('QQ', 'string', array('length'=>30, 'default'=>'', 'null'=>false, 'comment'=>'QQ号'))
-            ->addColumn('remark', 'text', array('default'=>'', 'null'=>false, 'comment'=>'备注'))
+            ->addColumn('remark', 'text', array('null'=>false, 'comment'=>'备注'))
             ->addTimestamps()
             ->addIndex('student_id')
             ->addIndex('student_id_old')

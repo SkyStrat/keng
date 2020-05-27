@@ -37,7 +37,7 @@ class CreateOldStudent extends Migrator
             ->addColumn('address', 'string', array('length'=>250, 'default'=>'', 'null'=>false, 'comment'=>'家庭住址'))
             ->addColumn('home_phone', 'string', array('length'=>50, 'default'=>'', 'null'=>false, 'comment'=>'家庭电话'))
             ->addColumn('status', 'integer', array('length'=>1, 'default'=>0, 'null'=>false, 'comment'=>'状态 1 毕业 2 转学 3 删除'))
-            ->addColumn('remark', 'text', array('default'=>'', 'null'=>false, 'comment'=>'备注'))
+            ->addColumn('remark', 'text', array('null'=>false, 'comment'=>'备注'))
             ->addColumn('responsible_account', 'string', array('length'=>50, 'default'=>'', 'null'=>false, 'comment'=>'负责人帐号'))
             ->addColumn('responsible_name', 'string', array('length'=>50, 'default'=>'', 'null'=>false, 'comment'=>'负责人'))
             ->addColumn('create_account', 'string', array('length'=>50, 'default'=>'', 'null'=>false, 'comment'=>'创建人帐号'))
