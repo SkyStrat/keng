@@ -21,6 +21,7 @@ class CommonController extends Controller
     {
         $this->app->cache->clear();
         $this->result['msg'] = '服务端清理缓存成功';
+        $this->result['code'] = 1;
         return $this->jsonResult();
     }
 }
