@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>layui</title>
+    <meta name="csrf-token" content="<{:token('__studenttoken__')}>">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="__STATIC__/layuimini/lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="__STATIC__/layuimini/css/public.css" media="all">
+    <style>
+        .parentsLine {
+            display: inline-flex;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+
+        <fieldset class="table-search-fieldset">
+            <legend>搜索信息</legend>
+            <div style="margin: 10px 10px 10px 10px">
+                <form class="layui-form layui-form-pane" action="">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">学号</label>
+                            <div class="layui-input-inline">
+                                <input type="text" id="s_student_no" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">学生名字</label>
+                            <div class="layui-input-inline">
+                                <input type="text" id="s_student_name" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <a class="layui-btn layui-btn-primary" id="search"><i class="layui-icon"></i> 搜 索</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </fieldset>
+
+        <script type="text/html" id="toolbarDemo">
+            <div class="layui-btn-container">
+                <button class="layui-btn layui-btn-sm data-add-btn" lay-event="add"> 添加用户 </button>
+                <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"> 批量删除 </button>
+            </div>
+        </script>
+
+        <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+
+        <script type="text/html" id="currentTableBar">
+            <a class="layui-btn layui-btn-xs data-count-edit" lay-event="edit">编辑</a>
+            <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>
+            {{# if(d.status == 0){ }}
+            <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="studying">在读</a>
+            {{# }else if(d.status == 1){ }}
+            <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="graduation">毕业</a>
+            <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="transfer">转学</a>
+            {{# } }}
+        </script>
+
+        <!----------------- 添加学生弹出层start ----------------->
+        <form class="layui-form layuimini-form" id="addform" lay-filter="addform" style="display: none;margin: 10px 70px 0 5px;">
+            <a style="display: none;" id="b_submit" lay-submit lay-filter="b_submit"></a>
+            <div class="layui-form-item">
+                <label class="layui-form-label required" style="width: 80px !important;">学生姓名</label>
+                <div class="layui-input-block" style="margin-left: 110px !important">
+                    <input type="text" name="name" placeholder="请输入学生姓名" lay-verify="required" value="" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width: 80px !important;">性别</label>
+                <div class="layui-input-block" style="margin-left: 110px !important">
+                    <input type="radio" name="sex" value="0" title="男" checked="" lay-filter="sex">
+                    <input type="radio" name="sex" value="1" title="女" lay-filter="sex">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width: 80px !important;">年龄</label>
+                <div class="layui-input-block" style="margin-left: 110px !important">
+                    <input type="text" name="age" placeholder="请输入年龄" value="" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required" style="width: 80px !important;">年级</label>
+                <div class="layui-input-block" style="margin-left: 110px !important">
+                    <input type="text" name="grade" placeholder="请输入年级" lay-verify="required" value="" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required" style="width: 80px !important;">班级</label>
+                <div class="layui-input-block" style="margin-left: 110px !important">
+                    <input type="text" name="class" placeholder="请输入班级" lay-verify="required" value="" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required" style="width: 80px !important;">家庭电话</label>
+                <div class="layui-input-block" style="margin-left: 110px !important">
+                    <input type="text" name="home_phone" placeholder="请输入家庭电话" lay-verify="required" value="" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required" style="width: 80px !important;">现居住地址</label>
+                <div class="layui-input-block" style="margin-left: 110px !important">
+                    <input type="text" name="address" placeholder="请输入家庭住址" lay-verify="required" value="" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block" style="margin-left: 65px !important">
+                    <div class="layui-card" style="box-shadow: 0 1px 2px 0 rgba(0,0,0,1);">
+                        <div class="layui-card-header" style="border-bottom: 1px solid #989898;">家庭成员</div>
+                        <div class="layui-card-body">
+                            <div class="layui-collapse" id="colla_list">
+                                <div class="layui-colla-item" id="home0">
+                                    <h2 class="layui-colla-title">家庭成员1<i class="layui-icon" style="position: absolute;right: 20px;z-index:9999;" onclick="closecolla(this)">&#x1006;</i></h2>
+                                    <div class="layui-colla-content layui-show">
+                                        <div class="parentsLine layui-form-item">
+                                            <div class="layui-input-block" style="margin-left: 0px !important;width: 120px;">
+                                                <input type="text" name="parent_name[0]" placeholder="请输入家长姓名" lay-verify="required" value="" class="layui-input">
+                                            </div>
+                                        </div>
+                                        <div class="parentsLine layui-form-item">
+                                            <div class="layui-input-block" style="margin-left: 0px !important;width: 120px;">
+                                                <select name="parent_relation[0]" lay-verify="required">
+                                                    <option value="0">请选择与学生的关系</option>
+                                                    <option value="1">父亲</option>
+                                                    <option value="2">母亲</option>
+                                                    <option value="3">爷爷</option>
+                                                    <option value="4">奶奶</option>
+                                                    <option value="5">外婆</option>
+                                                    <option value="6">外公</option>
+                                                    <option value="7">其他(备注描述)</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="parentsLine layui-form-item">
+                                            <div class="layui-input-block" style="margin-left: 0px !important;width: 120px;">
+                                                <input type="text" name="parent_phone[0]" placeholder="请输入手机号码" lay-verify="required|phone" value="" class="layui-input">
+                                            </div>
+                                        </div>
+                                        <div class="parentsLine layui-form-item">
+                                            <div class="layui-input-block" style="margin-left: 0px !important;width: 120px;">
+                                                <input type="text" name="parent_wx[0]" placeholder="请输入微信号" value="" class="layui-input">
+                                            </div>
+                                        </div>
+                                        <div class="parentsLine layui-form-item">
+                                            <div class="layui-input-block" style="margin-left: 0px !important;width: 120px;">
+                                                <input type="text" name="parent_qq[0]" placeholder="请输入QQ号" value="" class="layui-input">
+                                            </div>
+                                        </div>
+                                        <div class="parentsLine layui-form-item">
+                                            <div class="layui-input-block" style="margin-left: 0px !important;width: 120px;">
+                                                <input type="text" name="parent_remark[0]" placeholder="请输入备注" value="" class="layui-input">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="margin-top: 10px;text-align: center;">
+                                <a class="layui-btn layui-btn-sm" id="addcolla">新增条目</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <!----------------- 添加学生弹出层end ----------------->
+
+        <!----------------- 修改学生弹出层start ----------------->
+        <form class="layui-form layuimini-form" id="editform" lay-filter="editform" style="display: none;margin: 10px 70px 0 5px;">
+            <a style="display: none;" id="c_submit" lay-submit lay-filter="c_submit"></a>
+            <div class="layui-form-item">
+                <label class="layui-form-label required" style="width: 80px !important;">学生姓名</label>
+                <div class="layui-input-block" style="margin-left: 110px !important">
+                    <input type="text" name="name" placeholder="请输入学生姓名" lay-verify="required" value="" class="layui-input">
+                    <input type="hidden" name="id" value="">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width: 80px !important;">性别</label>
+                <div class="layui-input-block" style="margin-left: 110px !important">
+                    <input type="radio" name="sex" value="0" title="男" checked="" lay-filter="sex">
+                    <input type="radio" name="sex" value="1" title="女" lay-filter="sex">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width: 80px !important;">年龄</label>
+                <div class="layui-input-block" style="margin-left: 110px !important">
+                    <input type="text" name="age" placeholder="请输入年龄" value="" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required" style="width: 80px !important;">年级</label>
+                <div class="layui-input-block" style="margin-left: 110px !important">
+                    <input type="text" name="grade" placeholder="请输入年级" lay-verify="required" value="" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required" style="width: 80px !important;">班级</label>
+                <div class="layui-input-block" style="margin-left: 110px !important">
+                    <input type="text" name="class" placeholder="请输入班级" lay-verify="required" value="" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required" style="width: 80px !important;">家庭电话</label>
+                <div class="layui-input-block" style="margin-left: 110px !important">
+                    <input type="text" name="home_phone" placeholder="请输入家庭电话" lay-verify="required" value="" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required" style="width: 80px !important;">现居住地址</label>
+                <div class="layui-input-block" style="margin-left: 110px !important">
+                    <input type="text" name="address" placeholder="请输入家庭住址" lay-verify="required" value="" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block" style="margin-left: 65px !important">
+                    <div class="layui-card" style="box-shadow: 0 1px 2px 0 rgba(0,0,0,1);">
+                        <div class="layui-card-header" style="border-bottom: 1px solid #989898;">家庭成员</div>
+                        <div class="layui-card-body">
+                            <div class="layui-collapse" id="colla_list_edit">
+                            </div>
+
+                            <div style="margin-top: 10px;text-align: center;">
+                                <a class="layui-btn layui-btn-sm" id="addcolla_edit">新增条目</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <!----------------- 添加学生弹出层end ----------------->
+
+        <!----------------- 入学状态选择负责老师弹出层start ----------------->
+        <form class="layui-form layuimini-form" id="entranceStatusForm" lay-filter="entranceStatusForm" style="display: none;margin: 10px 70px 0 5px;">
+            <div class="layui-form-item">
+                <label class="layui-form-label required">负责老师</label>
+                <div class="layui-input-block">
+                    <select name="responsible" lay-verify="required" lay-filter="responsibleSelect">
+                        <option value="">请选择负责老师</option>
+                        <{foreach $teacher as $value}>
+                        <option value="<{$value['account']}>-<{$value['username']}>"><{$value['username']}></option>
+                        <{/foreach}>
+                    </select>
+                </div>
+            </div>
+        </form>
+        <!----------------- 入学状态选择负责老师弹出层end----------------->
+    </div>
+</div>
+<script src="__STATIC__/layuimini/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+<script>
+    layui.use(['jquery', 'form', 'table', 'layer', 'element'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            table = layui.table,
+            layer = layui.layer,
+            element = layui.element;
+        var batch_delete = [];
+        var collanum = 0;
+        var responsibleSelectData = '';
+        var batch_teacher_id = [];
+
+        table.render({
+            elem: '#currentTableId',
+            url: '<{:url("studentlist")}>',
+            toolbar: '#toolbarDemo',
+            defaultToolbar: [],
+            parseData: function(res){ //res 即为原始返回的数据
+                return {
+                    "code": res.code, //解析接口状态
+                    "message": res.message, //解析提示文本
+                    "count": res.total, //解析数据长度
+                    "data": res.data //解析数据列表
+                };
+            },
+            cols: [[
+                {type: "checkbox", width: 50, fixed: "left"},
+                {field: 'grade', width: 80, title: '年级'},
+                {field: 'class', width: 80, title: '班级'},
+                {field: 'student_no', width: 80, title: '学号'},
+                {field: 'name', width: 120, title: '姓名'},
+                {field: 'sex', width: 80, title: '性别', templet: function(d) {
+                    if(d.sex == 0) {
+                        return '男';
+                    }else {
+                        return '女';
+                    }
+                }},
+                {field: 'age', width: 80, title: '年龄'},
+                {field: 'home_phone', width: 150, title: '家庭电话'},
+                {field: 'address', width: 180, title: '家庭住址'},
+                {field: 'status', width: 80, title: '状态', templet: function(d) {
+                        if(d.status == 0) {
+                            return '入学中';
+                        }else if(d.status == 1){
+                            return '在读';
+                        }else if(d.status == 2) {
+                            return '毕业';
+                        }else if(d.status == 3) {
+                            return '转学';
+                        }
+                    }},
+                {field: 'responsible_name', width: 120, title: '负责老师'},
+                {field: 'remark', width: 80, title: '备注'},
+                {title: '操作', minWidth: 230, templet: '#currentTableBar', fixed: "right", align: "center"}
+            ]],
+            limits: [10, 15, 20, 25, 50, 100],
+            limit: 15,
+            page: true
+        });
+
+        // 搜索操作
+        $('#search').click(function(d) {
+            var param = {
+                student_no: $('#s_student_no').val(),
+                name: $('#s_student_name').val()
+            };
+            table.reload('currentTableId', {
+                where: param
+            }); //表格重载
+        });
+
+        /**
+         * toolbar监听事件
+         */
+        table.on('toolbar(currentTableFilter)', function (obj) {
+            if (obj.event === 'add') {  // 监听添加操作
+                $('#addform')[0].reset();
+                form.render(); //更新渲染
+                collanum = 0;
+                layer.open({
+                    btn: ['提交', '关闭'],
+                    title: '添加用户',
+                    type: 1,
+                    shade: 0.2,
+                    shadeClose: true,
+                    area: ['700px', '600px'],
+                    content: $('#addform'),
+                    yes: function(index, layero) {
+                        $('#b_submit').click();
+                        layer.close(index);
+                    }
+                });
+            } else if (obj.event === 'delete') {  // 监听删除操作
+                var checkStatus = table.checkStatus('currentTableId'); //获取选中数据
+                var str = '';
+                batch_delete = [];
+                $.each(checkStatus.data, function(i, item) {
+                    batch_delete.push(item.id);
+                    str += item.name+",";
+                });
+                str = str.substring(0,str.length-1);
+                layer.confirm('是否删除用户：'+str, function (index) {
+                    deleted(batch_delete);
+                    layer.close(index);
+                });
+            }
+        });
+
+        /*行尾操作按钮触发方法*/
+        table.on('tool(currentTableFilter)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'edit') {
+                $('#editform')[0].reset();
+                form.val("editform", {
+                    "id" : data.id,
+                    "name": data.name,
+                    "sex": data.sex,
+                    "age": data.age,
+                    "grade": data.grade,
+                    "class": data.class,
+                    "home_phone": data.home_phone,
+                    "address": data.address
+                });
+                updateshow(data.parents);
+                form.render(); //更新渲染
+                element.init(); //初始化layui组件
+                layer.open({
+                    btn: ['提交', '关闭'],
+                    title: '修改用户',
+                    type: 1,
+                    shade: 0.2,
+                    shadeClose: true,
+                    area: ['700px', '600px'],
+                    content: $('#editform'),
+                    yes: function(index, layero) {
+                        $('#c_submit').click();
+                        layer.close(index);
+                    }
+                });
+            } else if (obj.event === 'delete') {
+                batch_delete = [data.id];
+                layer.confirm('是否删除用户：'+data.name, function (index) {
+                    deleted(batch_delete);
+                    layer.close(index);
+                });
+            } else if (obj.event === 'studying') { //在读状态改变
+                batch_teacher_id = [data.id];
+                layer.open({
+                    btn: ['提交', '关闭'],
+                    title: '选择负责老师',
+                    type: 1,
+                    shade: 0.2,
+                    shadeClose: true,
+                    area: ['500px', '250px'],
+                    content: $('#entranceStatusForm'),
+                    yes: function(index, layero) {
+                        updateStatus(batch_teacher_id, obj.event);
+                        layer.close(index);
+                    }
+                });
+            } else if (obj.event === 'graduation') { //毕业状态改变
+                batch_teacher_id = [data.id];
+                layer.confirm('是否改变用户状态为毕业：'+data.name, function (index) {
+                    updateStatus(batch_teacher_id, obj.event);
+                    layer.close(index);
+                });
+            } else if (obj.event === 'transfer') { //转学状态改变
+                batch_teacher_id = [data.id];
+                layer.confirm('是否改变用户状态为转学：'+data.name, function (index) {
+                    updateStatus(batch_teacher_id, obj.event);
+                    layer.close(index);
+                });
+            }
+        });
+
+        form.on('select(responsibleSelect)', function(data){
+            responsibleSelectData = data.value;
+        });
+
+        //添加方法
+        form.on('submit(b_submit)', function(data) {
+            $.ajax({
+                url: '<{:url("studentadd")}>',
+                type: 'post',
+                headers:{
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: data.field,
+                success: function(res) {
+                    $('meta[name="csrf-token"]').attr('content', res.token); //刷新令牌
+                    if(res.code < 0) {
+                        layer.msg('操作失败');
+                    }else {
+                        layer.msg('操作成功');
+                        table.reload('currentTableId'); //表格重载
+                    }
+                },
+                error: function(err) {
+                    layer.msg(err.statusText);
+                }
+            });
+            return false;
+        });
+
+        //修改方法
+        form.on('submit(c_submit)', function(data) {
+            $.ajax({
+                url: '<{:url("studentupdate")}>',
+                type: 'post',
+                headers:{
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: data.field,
+                success: function(res) {
+                    $('meta[name="csrf-token"]').attr('content', res.token); //刷新令牌
+                    if(res.code < 0) {
+                        layer.msg('操作失败');
+                    }else {
+                        layer.msg('操作成功');
+                        table.reload('currentTableId'); //表格重载
+                    }
+                },
+                error: function(err) {
+                    layer.msg(err.statusText);
+                }
+            });
+            return false;
+        });
+
+        //删除方法
+        var deleted = function(id) {
+            if(!id) {
+                layer.msg('请选中学生进行删除');
+                return;
+            }
+            var param = {
+                id: id
+            };
+            $.ajax({
+                url: '<{:url("studentdelete")}>',
+                type: 'post',
+                data: param,
+                success: function(res) {
+                    if(res.code < 0) {
+                        layer.msg('操作失败');
+                    }else {
+                        layer.msg('操作成功');
+                        table.reload('currentTableId'); //表格重载
+                    }
+                },
+                error: function(err) {
+                    layer.msg(err.statusText);
+                }
+            });
+        };
+
+        var updateStatus = function(id,type) {
+            if(!id) {
+                layer.msg('请选中学生进行删除');
+                return;
+            }
+            var param = {};
+            if(type === 'studying' && responsibleSelectData) {
+                param = {
+                    id: id,
+                    type: type,
+                    teacher_info: responsibleSelectData
+                }
+            }else if(type === 'graduation') {
+                param = {
+                    id: id,
+                    type: type
+                }
+            }else if(type === 'transfer') {
+                param = {
+                    id: id,
+                    type: type
+                }
+            }else {
+                layer.msg('系统错误！');
+                return;
+            }
+            $.ajax({
+                url: '<{:url("studentstatus")}>',
+                type: 'post',
+                data: param,
+                success: function(res) {
+                    if(res.code < 0) {
+                        layer.msg('操作失败');
+                    }else {
+                        layer.msg('操作成功');
+                        table.reload('currentTableId'); //表格重载
+                    }
+                },
+                error: function(err) {
+                    layer.msg(err.statusText);
+                }
+            });
+        };
+
+        $('#addcolla').click(function() {
+            var data = form.val("addform"); //获取之前填好的数据
+            addentry('colla_list');
+            element.init(); //初始化layui组件
+            form.render(); //表单初始化
+            form.val("addform", data); //把之前已经记录好的数据返填上去
+        });
+
+        $('#addcolla_edit').click(function() {
+            var data = form.val("editform"); //获取之前填好的数据
+            addentry('colla_list_edit');
+            element.init(); //初始化layui组件
+            form.render(); //表单初始化
+            form.val("editform", data); //把之前已经记录好的数据返填上去
+        });
+
+        //增加家庭成员条目
+        var addentry = function(id_elm) {
+            collanum += 1;
+            var html_code = '<div class="layui-colla-item" lay-accordion id="home'+collanum+'">';
+            html_code += '<h2 class="layui-colla-title">家庭成员'+(collanum+1)+'<i class="layui-icon" style="position: absolute;right: 20px;z-index:9999;" onclick="closecolla(this)">&#x1006;</i></h2>';
+            html_code += '<div class="layui-colla-content layui-show">';
+            html_code += '<div class="parentsLine layui-form-item"><div class="layui-input-block" style="margin-left: 0px !important;width: 120px;"><input type="text" name="parent_name['+collanum+']" placeholder="请输入家长姓名" lay-verify="required" value="" class="layui-input"></div></div>';
+            html_code += '<div class="parentsLine layui-form-item"><div class="layui-input-block" style="margin-left: 0px !important;width: 120px;"><select name="parent_relation['+collanum+']" lay-verify="required"><option value="0">请选择与学生的关系</option><option value="1">父亲</option><option value="2">母亲</option><option value="3">爷爷</option><option value="4">奶奶</option><option value="5">外婆</option><option value="6">外公</option><option value="7">其他(备注描述)</option></select></div></div>'
+            html_code += '<div class="parentsLine layui-form-item"><div class="layui-input-block" style="margin-left: 0px !important;width: 120px;"><input type="text" name="parent_phone['+collanum+']" placeholder="请输入手机号码" lay-verify="required|phone" value="" class="layui-input"></div></div>';
+            html_code += '<div class="parentsLine layui-form-item"><div class="layui-input-block" style="margin-left: 0px !important;width: 120px;"><input type="text" name="parent_wx['+collanum+']" placeholder="请输入微信号" value="" class="layui-input"></div></div>';
+            html_code += '<div class="parentsLine layui-form-item"><div class="layui-input-block" style="margin-left: 0px !important;width: 120px;"><input type="text" name="parent_qq['+collanum+']" placeholder="请输入QQ号" value="" class="layui-input"></div></div>';
+            html_code += '<div class="parentsLine layui-form-item"><div class="layui-input-block" style="margin-left: 0px !important;width: 120px;"><input type="text" name="parent_remark['+collanum+']" placeholder="请输入备注" value="" class="layui-input"></div></div>';
+
+            if(id_elm == 'colla_list_edit') {
+                html_code += '<input type="hidden" name="parent_id['+collanum+']" value="0" />';
+            }
+
+            html_code += '</div>';
+            html_code += '</div>';
+
+            $('#'+id_elm)[0].innerHTML += html_code;
+        };
+
+        //展示家庭成员条目
+        var updateshow = function(data) {
+            $('#colla_list_edit')[0].innerHTML = '';
+            var html_code = '';
+            collanum = 0;
+            $.each(data, function(i, item) {
+                html_code += '<div class="layui-colla-item" lay-accordion id="home'+collanum+'">';
+                html_code += '<h2 class="layui-colla-title">家庭成员'+(collanum+1)+'<i class="layui-icon" style="position: absolute;right: 20px;z-index:9999;" onclick="closecolla(this)">删除</i></h2>';
+                html_code += '<div class="layui-colla-content layui-show">';
+                html_code += '<div class="parentsLine layui-form-item"><div class="layui-input-block" style="margin-left: 0px !important;width: 120px;"><input type="text" name="parent_name['+collanum+']" placeholder="请输入家长姓名" lay-verify="required" value="'+item.name+'" class="layui-input"></div></div>';
+                if(item.relation_child == 1) {
+                    html_code += '<div class="parentsLine layui-form-item"><div class="layui-input-block" style="margin-left: 0px !important;width: 120px;"><select name="parent_relation['+collanum+']" lay-verify="required"><option value="0">请选择与学生的关系</option><option value="1" selected>父亲</option><option value="2">母亲</option><option value="3">爷爷</option><option value="4">奶奶</option><option value="5">外婆</option><option value="6">外公</option><option value="7">其他(备注描述)</option></select></div></div>';
+                }else if(item.relation_child == 2) {
+                    html_code += '<div class="parentsLine layui-form-item"><div class="layui-input-block" style="margin-left: 0px !important;width: 120px;"><select name="parent_relation['+collanum+']" lay-verify="required"><option value="0">请选择与学生的关系</option><option value="1">父亲</option><option value="2" selected>母亲</option><option value="3">爷爷</option><option value="4">奶奶</option><option value="5">外婆</option><option value="6">外公</option><option value="7">其他(备注描述)</option></select></div></div>';
+                }else if(item.relation_child == 3) {
+                    html_code += '<div class="parentsLine layui-form-item"><div class="layui-input-block" style="margin-left: 0px !important;width: 120px;"><select name="parent_relation['+collanum+']" lay-verify="required"><option value="0">请选择与学生的关系</option><option value="1">父亲</option><option value="2">母亲</option><option value="3" selected>爷爷</option><option value="4">奶奶</option><option value="5">外婆</option><option value="6">外公</option><option value="7">其他(备注描述)</option></select></div></div>';
+                }else if(item.relation_child == 4) {
+                    html_code += '<div class="parentsLine layui-form-item"><div class="layui-input-block" style="margin-left: 0px !important;width: 120px;"><select name="parent_relation['+collanum+']" lay-verify="required"><option value="0">请选择与学生的关系</option><option value="1">父亲</option><option value="2">母亲</option><option value="3">爷爷</option><option value="4" selected>奶奶</option><option value="5">外婆</option><option value="6">外公</option><option value="7">其他(备注描述)</option></select></div></div>';
+                }else if(item.relation_child == 5) {
+                    html_code += '<div class="parentsLine layui-form-item"><div class="layui-input-block" style="margin-left: 0px !important;width: 120px;"><select name="parent_relation['+collanum+']" lay-verify="required"><option value="0">请选择与学生的关系</option><option value="1">父亲</option><option value="2">母亲</option><option value="3">爷爷</option><option value="4">奶奶</option><option value="5" selected>外婆</option><option value="6">外公</option><option value="7">其他(备注描述)</option></select></div></div>';
+                }else if(item.relation_child == 6) {
+                    html_code += '<div class="parentsLine layui-form-item"><div class="layui-input-block" style="margin-left: 0px !important;width: 120px;"><select name="parent_relation['+collanum+']" lay-verify="required"><option value="0">请选择与学生的关系</option><option value="1">父亲</option><option value="2">母亲</option><option value="3">爷爷</option><option value="4">奶奶</option><option value="5">外婆</option><option value="6" selected>外公</option><option value="7">其他(备注描述)</option></select></div></div>';
+                }else if(item.relation_child == 7) {
+                    html_code += '<div class="parentsLine layui-form-item"><div class="layui-input-block" style="margin-left: 0px !important;width: 120px;"><select name="parent_relation['+collanum+']" lay-verify="required"><option value="0">请选择与学生的关系</option><option value="1">父亲</option><option value="2">母亲</option><option value="3">爷爷</option><option value="4">奶奶</option><option value="5">外婆</option><option value="6">外公</option><option value="7" selected>其他(备注描述)</option></select></div></div>';
+                }else {
+                    html_code += '<div class="parentsLine layui-form-item"><div class="layui-input-block" style="margin-left: 0px !important;width: 120px;"><select name="parent_relation['+collanum+']" lay-verify="required"><option value="0">请选择与学生的关系</option><option value="1">父亲</option><option value="2">母亲</option><option value="3">爷爷</option><option value="4">奶奶</option><option value="5">外婆</option><option value="6">外公</option><option value="7">其他(备注描述)</option></select></div></div>';
+                }
+                html_code += '<div class="parentsLine layui-form-item"><div class="layui-input-block" style="margin-left: 0px !important;width: 120px;"><input type="text" name="parent_phone['+collanum+']" placeholder="请输入手机号码" lay-verify="required|phone" value="'+item.phone+'" class="layui-input"></div></div>';
+                html_code += '<div class="parentsLine layui-form-item"><div class="layui-input-block" style="margin-left: 0px !important;width: 120px;"><input type="text" name="parent_wx['+collanum+']" placeholder="请输入微信号" value="'+item.wechat+'" class="layui-input"></div></div>';
+                html_code += '<div class="parentsLine layui-form-item"><div class="layui-input-block" style="margin-left: 0px !important;width: 120px;"><input type="text" name="parent_qq['+collanum+']" placeholder="请输入QQ号" value="'+item.QQ+'" class="layui-input"></div></div>';
+                html_code += '<div class="parentsLine layui-form-item"><div class="layui-input-block" style="margin-left: 0px !important;width: 120px;"><input type="text" name="parent_remark['+collanum+']" placeholder="请输入备注" value="'+item.remark+'" class="layui-input"><input type="hidden" name="parent_id['+collanum+']" value="'+item.id+'" /></div></div>';
+                html_code += '</div>';
+                html_code += '</div>';
+                collanum++;
+            });
+            collanum--;
+            $('#colla_list_edit')[0].innerHTML += html_code;
+        }
+    });
+
+    function closecolla(elm) {
+        elm.parentNode.parentNode.remove();
+    }
+
+</script>
+<script>
+
+</script>
+
+</body>
+</html>

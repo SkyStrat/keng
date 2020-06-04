@@ -2,22 +2,27 @@
 /**
  * Created by PhpStorm.
  * User: Administrator
- * Date: 2020/4/10
- * Time: 14:47
+ * Date: 2020/4/22
+ * Time: 18:45
  */
 
-namespace app\model\User;
+namespace app\model\Student;
 
 
 use think\Model;
 
-class User extends Model
+class Student extends Model
 {
-    protected $table = 'user';
+    protected $table = 'student';
     protected $pk = 'id';
     protected $createTime = 'create_time'; //创建时间字段名
     protected $updateTime = 'update_time'; //更新时间字段名
     protected $autoWriteTimestamp = 'timestamp'; //自动写入创建时间和更新时间
+
+    public function parents()
+    {
+        return $this->hasMany(Parents::class, 'student_id', 'id');
+    }
 
     /**
      * where条件
@@ -30,14 +35,14 @@ class User extends Model
         $where = [];
         foreach($option as $key=>$item) {
             switch($key) {
-                case $alias.'username':
-                    $where[] = [$key,'like',$item.'%'];
+                case $alias.'student_no':
+                    $where[] = [$alias.$key,'=',$item];
                     break;
-                case $alias.'account':
-                    $where[] = [$key,'=',$item];
+                case $alias.'name':
+                    $where[] = [$alias.$key,'=',$item];
                     break;
                 default:
-                    $where[] = [$key,'=',$item];
+                    $where[] = [$alias.$key,'=',$item];
             }
         }
 
@@ -45,15 +50,15 @@ class User extends Model
     }
 
     /**
-     * 返回老师用户
-     * @param string $field 指定返回的字段集
-     * @return \think\Collection
+     * @param $grade string
+     * @param $class string
+     * @return array|null|Model
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
      */
-    public function getTeacherRoleUser($field = '*')
+    public function getStudentNo($grade, $class)
     {
-        return $this->field($field)->where(['type'=>1])->select();
+        return $this->field('student_no')->where(['grade'=>$grade,'class'=>$class])->order('student_no','desc')->find();
     }
 }

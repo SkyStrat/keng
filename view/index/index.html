@@ -163,6 +163,26 @@
         };
         miniAdmin.render(options);
 
+        /*
+         * websocket客户端
+        var websocket = new WebSocket('ws://192.168.27.3:9501');
+        websocket.onopen = function (evt) {
+            websocket.send(JSON.stringify({
+                'type': 'login',
+                'user': 'who'
+            }));
+        };
+        websocket.onmessage = function (evt) {
+
+        };
+        websocket.onclose = function (evt) {
+
+        };
+        websocket.onerror = function(evt) {
+
+        };*/
+
+
         // 百度统计代码，只统计指定域名
         /*miniTongji.render({
             specific: true,
@@ -226,6 +246,8 @@
             });
         };
     });
+
+
 </script>
 </body>
 </html>

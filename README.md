@@ -1,52 +1,18 @@
-ThinkPHP 6.0
+jun项目
 ===============
 
-> 运行环境要求PHP7.1+。
+> 运行环境要求PHP7.1+ nginx linux mysql5.6+。
 
-## 主要新特性
+## 项目注意点
 
-* 采用`PHP7`强类型（严格模式）
-* 支持更多的`PSR`规范
-* 原生多应用支持
-* 更强大和易用的查询
-* 全新的事件系统
-* 模型事件和数据库事件统一纳入事件系统
-* 模板引擎分离出核心
-* 内部功能中间件化
-* SESSION/Cookie机制改进
-* 对Swoole以及协程支持改进
-* 对IDE更加友好
-* 统一和精简大量用法
-
-## 安装
-
+项目部署/更新后，需要执行以下命令，保证对应的数据库表结构与composer组件包是最新的状态
 ~~~
-composer create-project topthink/think tp 6.0.*
+php think migrate:run
+composer install
 ~~~
 
-如果需要更新框架使用
-~~~
-composer update topthink/framework
-~~~
+项目菜单分为两个地方进行存储，一个是动态菜单（数据库内），一个是静态菜单（config/menus.php配置文件内）
 
-## 文档
+## 项目扩展包
 
-[完全开发手册](https://www.kancloud.cn/manual/thinkphp6_0/content)
-
-## 参与开发
-
-请参阅 [ThinkPHP 核心框架包](https://github.com/top-think/framework)。
-
-## 版权信息
-
-ThinkPHP遵循Apache2开源协议发布，并提供免费使用。
-
-本项目包含的第三方源码和二进制文件之版权信息另行标注。
-
-版权所有Copyright © 2006-2020 by ThinkPHP (http://thinkphp.cn)
-
-All rights reserved。
-
-ThinkPHP® 商标和著作权所有者为上海顶想信息科技有限公司。
-
-更多细节参阅 [LICENSE.txt](LICENSE.txt)
+请把项目扩展包放置根目录下的extend目录内进行调用

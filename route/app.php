@@ -62,11 +62,22 @@ Route::group('/', function() {
    Route::post('userreload', 'UserController/reloadPassword')->name('userreload'); //重置密码
    /******************* 用户管理end ********************/
 
+<<<<<<< HEAD
 
     /******************* 通知管理start ********************/
     Route::get('notify', 'NotifyController/index')->name('notify'); //通知管理
     /******************* 通知管理end **********************/
 
+=======
+   /******************* 学生基本信息管理start ********************/
+   Route::get('student', 'StudentController/index')->name('student'); //学生基本信息管理
+   Route::get('studentlist', 'StudentController/queryList')->name('studentlist'); //学生列表
+   Route::post('studentadd', 'StudentController/addStudent')->name('studentadd')->token('__studenttoken__'); //学生添加
+   Route::post('studentupdate', 'StudentController/updateStudent')->name('studentupdate')->token('__studenttoken__'); //学生修改
+   Route::post('studentdelete', 'StudentController/deleteStudent')->name('studentdelete'); //学生删除
+   Route::post('studentstatus', 'StudentController/statusStudent')->name('studentstatus'); //学生状态修改
+   /******************* 学生基本信息管理end ********************/
+>>>>>>> d5325e5f881120941c2ae8a18e7e2b882cea7201
 
    Route::get('auth', 'AuthController/getMenus')->name('auth'); //获取权限
    Route::post('updatepassword', 'LoginController/updatePassword')->name('updatepassword'); //首页修改密码

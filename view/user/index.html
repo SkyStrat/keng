@@ -391,7 +391,7 @@
                 },
                 data: param,
                 success: function(res) {
-                    $('meta[name="csrf-token"]').attr('content', res.data); //刷新令牌
+                    $('meta[name="csrf-token"]').attr('content', res.token); //刷新令牌
                     if(res.code < 0) {
                         layer.msg('操作失败');
                     }else {
@@ -443,7 +443,7 @@
                 },
                 data: param,
                 success: function(res) {
-                    $('meta[name="csrf-token"]').attr('content', res.data); //刷新令牌
+                    $('meta[name="csrf-token"]').attr('content', res.token); //刷新令牌
                     if(res.code < 0) {
                         layer.msg('操作失败');
                     }else {

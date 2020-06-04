@@ -19,18 +19,16 @@ use think\facade\View;
 class RoleController extends Controller
 {
     private $model;
-    private $user_info;
 
     public function __construct(App $app)
     {
         parent::__construct($app);
         $this->model = new Role();
-        $this->user_info = $this->app->session->get('user');
     }
 
     public function index()
     {
-        $user_info = $this->user_info;
+        $user_info = $this->userInfo;
         $user_info['role_pid'] = $user_info['role']['pid'];
         $user_info['role_name'] = $user_info['role']['role_name'];
         unset($user_info['role']);
@@ -43,7 +41,7 @@ class RoleController extends Controller
     public function queryList()
     {
         $roleList = $this->model->select()->toArray();
-        if($this->user_info['role_id'] != 1) {
+        if($this->userInfo['role_id'] != 1) {
             $lower_role_id = $this->getLowerRole($roleList);
             $roleList = $this->model->where([['id', 'in', implode(',', $lower_role_id)]])->select()->toArray();
         }
@@ -101,14 +99,14 @@ class RoleController extends Controller
             }else {
                 $this->model->rollback();
                 $this->result['code'] = -1;
-                $this->result['message'] = 'fail';
+                $this->result['message'] = '添加失败';
             }
             unset($role_menus_model); //清除资源
             return $this->jsonResult();
-        }catch(Exception $e) {
+        }catch(\Exception $e) {
             $this->model->rollback();
             $this->result['code'] = -1;
-            $this->result['message'] = $e->getMessage();
+            $this->result['message'] = 'code:'.$e->getCode().'-----message:'.$e->getMessage();
             return $this->jsonResult();
         }
     }
@@ -147,14 +145,14 @@ class RoleController extends Controller
             }else {
                 $this->model->rollback();
                 $this->result['code'] = -1;
-                $this->result['message'] = 'fail';
+                $this->result['message'] = '修改失败';
             }
             unset($role_menus_model); //清除资源
             return $this->jsonResult();
         } catch(Exception $e) {
             $this->model->rollback();
             $this->result['code'] = -1;
-            $this->result['message'] = $e->getMessage();
+            $this->result['message'] = 'code:'.$e->getCode().'-----message:'.$e->getMessage();
             return $this->jsonResult();
         }
     }
@@ -244,7 +242,7 @@ class RoleController extends Controller
     {
         $lower_role = [];
 
-        array_push($lower_role, $this->user_info['role_id']);
+        array_push($lower_role, $this->userInfo['role_id']);
 
         foreach($roleList as $item) {
             foreach($lower_role as $value) {
@@ -256,5 +254,10 @@ class RoleController extends Controller
         array_shift($lower_role); //如果不需要显示当前用户角色，请注释掉
 
         return $lower_role;
+    }
+
+    private function refreshToken()
+    {
+        return $this->result['token'] = $this->request->buildToken('__roletoken__');
     }
 }
