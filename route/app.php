@@ -62,6 +62,12 @@ Route::group('/', function() {
    Route::post('userreload', 'UserController/reloadPassword')->name('userreload'); //重置密码
    /******************* 用户管理end ********************/
 
+
+    /******************* 通知管理start ********************/
+    Route::get('notify', 'NotifyController/index')->name('notify'); //通知管理
+    /******************* 通知管理end **********************/
+
+
    Route::get('auth', 'AuthController/getMenus')->name('auth'); //获取权限
    Route::post('updatepassword', 'LoginController/updatePassword')->name('updatepassword'); //首页修改密码
 })->middleware(AuthPermission::class);
