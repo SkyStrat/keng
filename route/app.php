@@ -80,9 +80,17 @@ Route::group('/', function() {
     Route::get('teacher', 'TeacherController/index')->name('teacher'); //老师基本信息管理
     Route::get('teacherlist', 'TeacherController/queryList')->name('teacherlist'); //老师列表
     Route::post('teacheradd', 'TeacherController/addTeacher')->name('teacheradd')->token('__teachertoken__'); //老师添加
-    Route::post('teacherupdate', 'TeacherController/updateTeacher')->name('teacherupdate')->token('__teachertoken__'); //老师添加
+    Route::post('teacherupdate', 'TeacherController/updateTeacher')->name('teacherupdate')->token('__teachertoken__'); //老师修改
     Route::post('teacherdelete', 'TeacherController/deleteTeacher')->name('teacherdelete'); //老师删除
    /******************* 老师基本信息管理end ********************/
+
+   /******************* 课程设置start ********************/
+    Route::get('course', 'CourseController/index')->name('course'); //课程设置
+    Route::get('courselist', 'CourseController/queryList')->name('courselist'); //课程设置列表
+    Route::post('courseadd', 'CourseController/addCourse')->name('courseadd')->token('__coursetoken__'); //添加课程
+    Route::post('courseupdate', 'CourseController/updateCourse')->name('courseupdate')->token('__coursetoken__'); //修改课程
+    Route::post('coursedelete', 'CourseController/deleteCourse')->name('coursedelete'); //删除课程
+   /******************* 课程设置end ********************/
 
    Route::get('auth', 'AuthController/getMenus')->name('auth'); //获取权限
    Route::post('updatepassword', 'LoginController/updatePassword')->name('updatepassword'); //首页修改密码
