@@ -71,6 +71,14 @@ Route::group('/', function() {
    Route::post('studentstatus', 'StudentController/statusStudent')->name('studentstatus'); //学生状态修改
    /******************* 学生基本信息管理end ********************/
 
+   /******************* 老师基本信息管理start ********************/
+    Route::get('teacher', 'TeacherController/index')->name('teacher'); //老师基本信息管理
+    Route::get('teacherlist', 'TeacherController/queryList')->name('teacherlist'); //老师列表
+    Route::post('teacheradd', 'TeacherController/addTeacher')->name('teacheradd')->token('__teachertoken__'); //老师添加
+    Route::post('teacherupdate', 'TeacherController/updateTeacher')->name('teacherupdate')->token('__teachertoken__'); //老师添加
+    Route::post('teacherdelete', 'TeacherController/deleteTeacher')->name('teacherdelete'); //老师删除
+   /******************* 老师基本信息管理end ********************/
+
    Route::get('auth', 'AuthController/getMenus')->name('auth'); //获取权限
    Route::post('updatepassword', 'LoginController/updatePassword')->name('updatepassword'); //首页修改密码
 })->middleware(AuthPermission::class);

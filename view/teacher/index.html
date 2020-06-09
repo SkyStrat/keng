@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>layui</title>
+    <meta name="csrf-token" content="<{:token('__teachertoken__')}>">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="__STATIC__/layuimini/lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="__STATIC__/layuimini/css/public.css" media="all">
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+
+        <fieldset class="table-search-fieldset">
+            <legend>搜索信息</legend>
+            <div style="margin: 10px 10px 10px 10px">
+                <form class="layui-form layui-form-pane" action="">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">教师编号</label>
+                            <div class="layui-input-inline">
+                                <input type="text" id="s_teacher_no" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">教师姓名</label>
+                            <div class="layui-input-inline">
+                                <input type="text" id="s_name" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <a class="layui-btn layui-btn-primary" id="search"><i class="layui-icon"></i> 搜 索</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </fieldset>
+
+        <script type="text/html" id="toolbarDemo">
+            <div class="layui-btn-container">
+                <button class="layui-btn layui-btn-sm data-add-btn" lay-event="add"> 添加用户 </button>
+                <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"> 批量删除 </button>
+            </div>
+        </script>
+
+        <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+
+        <script type="text/html" id="currentTableBar">
+            {{# if(d.account != 'admin'){ }}
+            <a class="layui-btn layui-btn-xs data-count-edit" lay-event="edit">编辑</a>
+            <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>
+            <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="reload">重置密码</a>
+            {{# } }}
+        </script>
+
+        <!----------------- 添加教师弹出层start ----------------->
+        <form class="layui-form layuimini-form" id="addform" lay-filter="addform" style="display: none;margin: 10px 70px 0 5px;">
+            <div class="layui-form-item">
+                <label class="layui-form-label required" style="width: 80px !important;">教师姓名</label>
+                <div class="layui-input-block" style="margin-left: 110px !important">
+                    <input type="text" name="name" placeholder="请输入教师姓名" class="layui-input" lay-verify="required">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width: 80px !important;">生日日期</label>
+                <div class="layui-input-block" style="margin-left: 110px !important">
+                    <input type="text" class="layui-input" id="birthday" name="birthday" placeholder="请选择生日日期" readonly>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width: 80px !important;">性别</label>
+                <div class="layui-input-block" style="margin-left: 110px !important">
+                    <input type="radio" name="sex" value="0" title="男" checked="" lay-filter="sex">
+                    <input type="radio" name="sex" value="1" title="女" lay-filter="sex">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required" style="width: 80px !important;">家庭住址</label>
+                <div class="layui-input-block" style="margin-left: 110px !important">
+                    <input type="text" name="address" placeholder="请输入家庭住址" class="layui-input" lay-verify="required">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required" style="width: 80px !important;">手机号码</label>
+                <div class="layui-input-block" style="margin-left: 110px !important">
+                    <input type="text" name="phone" placeholder="请输入手机号码" class="layui-input" lay-verify="required|phone">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width: 80px !important;">电子邮件</label>
+                <div class="layui-input-block" style="margin-left: 110px !important">
+                    <input type="text" name="email"  placeholder="请输入电子邮件" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width: 80px !important;">微信号</label>
+                <div class="layui-input-block" style="margin-left: 110px !important">
+                    <input type="text" name="wechat"  placeholder="请输入微信号" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width: 80px !important;">QQ号</label>
+                <div class="layui-input-block" style="margin-left: 110px !important">
+                    <input type="text" name="qq"  placeholder="请输入QQ号" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required" style="width: 80px !important;">紧急联系人</label>
+                <div class="layui-input-block" style="margin-left: 110px !important">
+                    <input type="text" name="urgent_name"  placeholder="请输入紧急联系人" class="layui-input" lay-verify="required">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required" style="width: 80px !important;">紧急联系方式</label>
+                <div class="layui-input-block" style="margin-left: 110px !important">
+                    <input type="text" name="urgent_phone"  placeholder="请输入紧急联系方式" class="layui-input" lay-verify="required|phone">
+                </div>
+            </div>
+            <a style="display: none;" id="addform_submit" lay-submit lay-filter="addform_submit"></a>
+        </form>
+        <!----------------- 添加教师弹出层end ----------------->
+
+        <!----------------- 修改教师弹出层start ----------------->
+        <form class="layui-form layuimini-form" id="editform" lay-filter="editform" style="display: none;margin: 10px 70px 0 5px;">
+            <input type="hidden" name="id" class="layui-input">
+            <div class="layui-form-item">
+                <label class="layui-form-label required" style="width: 80px !important;">教师姓名</label>
+                <div class="layui-input-block" style="margin-left: 110px !important">
+                    <input type="text" name="name" placeholder="请输入教师姓名" class="layui-input" lay-verify="required">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width: 80px !important;">生日日期</label>
+                <div class="layui-input-block" style="margin-left: 110px !important">
+                    <input type="text" class="layui-input" id="birthday2" name="birthday" placeholder="请选择生日日期" readonly>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width: 80px !important;">性别</label>
+                <div class="layui-input-block" style="margin-left: 110px !important">
+                    <input type="radio" name="sex" value="0" title="男" checked="" lay-filter="sex">
+                    <input type="radio" name="sex" value="1" title="女" lay-filter="sex">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required" style="width: 80px !important;">家庭住址</label>
+                <div class="layui-input-block" style="margin-left: 110px !important">
+                    <input type="text" name="address" placeholder="请输入家庭住址" class="layui-input" lay-verify="required">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required" style="width: 80px !important;">手机号码</label>
+                <div class="layui-input-block" style="margin-left: 110px !important">
+                    <input type="text" name="phone" placeholder="请输入手机号码" class="layui-input" lay-verify="required|phone">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width: 80px !important;">电子邮件</label>
+                <div class="layui-input-block" style="margin-left: 110px !important">
+                    <input type="text" name="email"  placeholder="请输入电子邮件" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width: 80px !important;">微信号</label>
+                <div class="layui-input-block" style="margin-left: 110px !important">
+                    <input type="text" name="wechat"  placeholder="请输入微信号" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width: 80px !important;">QQ号</label>
+                <div class="layui-input-block" style="margin-left: 110px !important">
+                    <input type="text" name="qq"  placeholder="请输入QQ号" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required" style="width: 80px !important;">紧急联系人</label>
+                <div class="layui-input-block" style="margin-left: 110px !important">
+                    <input type="text" name="urgent_name"  placeholder="请输入紧急联系人" class="layui-input" lay-verify="required">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required" style="width: 80px !important;">紧急联系方式</label>
+                <div class="layui-input-block" style="margin-left: 110px !important">
+                    <input type="text" name="urgent_phone"  placeholder="请输入紧急联系方式" class="layui-input" lay-verify="required|phone">
+                </div>
+            </div>
+            <a style="display: none;" id="editform_submit" lay-submit lay-filter="editform_submit"></a>
+        </form>
+        <!----------------- 修改教师弹出层end ----------------->
+    </div>
+</div>
+<script src="__STATIC__/layuimini/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+<script>
+    layui.use(['jquery', 'form', 'table', 'layer', 'laydate'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            table = layui.table,
+            layer = layui.layer,
+            laydate = layui.laydate;
+        var batch_delete = [];
+
+        /**
+         * 日期选择器
+         * */
+        laydate.render({
+            elem: '#birthday' //指定元素
+        });
+
+        table.render({
+            elem: '#currentTableId',
+            url: '<{:url("teacherlist")}>',
+            toolbar: '#toolbarDemo',
+            defaultToolbar: [],
+            parseData: function(res){ //res 即为原始返回的数据
+                return {
+                    "code": res.code, //解析接口状态
+                    "message": res.message, //解析提示文本
+                    "count": res.total, //解析数据长度
+                    "data": res.data //解析数据列表
+                };
+            },
+            cols: [[
+                {type: "checkbox", width: 50, fixed: "left"},
+                {field: 'teacher_no', width: 80, title: '教师编号'},
+                {field: 'name', width: 80, title: '教师名称'},
+                {field: 'sex', width: 80, title: '性别', templet: function(d) {
+                    if(d.sex == 0) {
+                        return '男';
+                    }else {
+                        return '女';
+                    }
+                }},
+                {field: 'address', width: 120, title: '家庭住址'},
+                {field: 'phone', width: 120, title: '手机号码'},
+                {field: 'email', width: 120, title: '电子邮件'},
+                {field: 'wechat', width: 120, title: '微信号'},
+                {field: 'qq', width: 120, title: 'QQ号'},
+                {field: 'urgent_name', width: 120, title: '紧急联系人'},
+                {field: 'urgent_phone', width: 120, title: '紧急联系方式'},
+                {title: '操作', minWidth: 50, templet: '#currentTableBar', fixed: "right", align: "center"}
+            ]],
+            limits: [10, 15, 20, 25, 50, 100],
+            limit: 15,
+            page: true
+        });
+
+        // 搜索操作
+        $('#search').click(function(d) {
+            var param = {
+                teacher_no: $('#s_teacher_no').val(),
+                name: $('#s_name').val()
+            };
+            table.reload('currentTableId', {
+                where: param
+            }); //表格重载
+        });
+
+        /**
+         * toolbar监听事件
+         */
+        table.on('toolbar(currentTableFilter)', function (obj) {
+            if (obj.event === 'add') {  // 监听添加操作
+                $('#addform')[0].reset();
+                form.render(); //更新渲染
+
+                layer.open({
+                    btn: ['提交', '关闭'],
+                    title: '添加教师',
+                    type: 1,
+                    shade: 0.2,
+                    shadeClose: true,
+                    area: ['500px', '600px'],
+                    content: $('#addform'),
+                    yes: function(index, layero) {
+                        $('#addform_submit').click();
+                    }
+                });
+            } else if (obj.event === 'delete') {  // 监听删除操作
+                var checkStatus = table.checkStatus('currentTableId'); //获取选中数据
+                var str = '';
+                batch_delete = [];
+                $.each(checkStatus.data, function(i, item) {
+                    batch_delete.push(item.id);
+                    str += item.name+",";
+                });
+                str = str.substring(0,str.length-1);
+                layer.confirm('是否删除教师：'+str, function (index) {
+                    deleted(batch_delete);
+                    layer.close(index);
+                });
+            }
+        });
+
+        /**
+         *  行操作事件
+         */
+        table.on('tool(currentTableFilter)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'edit') {
+                form.val("editform", {
+                    "id": data.id,
+                    "name": data.name,
+                    "sex": data.sex,
+                    "address": data.address,
+                    "phone": data.phone,
+                    "email": data.email,
+                    "wechat": data.wechat,
+                    "qq": data.qq,
+                    "urgent_name": data.urgent_name,
+                    "urgent_phone": data.urgent_phone
+                });
+                laydate.render({
+                    elem: '#birthday2',
+                    value: data.birthday_date
+                });
+                form.render(); //更新渲染
+                layer.open({
+                    btn: ['提交', '关闭'],
+                    title: '修改教师',
+                    type: 1,
+                    shade: 0.2,
+                    shadeClose: true,
+                    area: ['500px', '600px'],
+                    content: $('#editform'),
+                    yes: function(index, layero) {
+                        $('#editform_submit').click();
+                    }
+                });
+            } else if (obj.event === 'delete') {
+                batch_delete = [data.id];
+                layer.confirm('是否删除教师：'+data.name, function (index) {
+                    deleted(batch_delete);
+                    layer.close(index);
+                });
+            }
+        });
+
+        /**
+         * 添加方法
+         */
+        form.on('submit(addform_submit)', function(data) {
+            $.ajax({
+                url: '<{:url("teacheradd")}>',
+                type: 'post',
+                headers:{
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: data.field,
+                success: function(res) {
+                    $('meta[name="csrf-token"]').attr('content', res.token); //刷新令牌
+                    if(res.code < 0) {
+                        layer.msg('操作失败');
+                    }else {
+                        layer.msg('操作成功');
+                        table.reload('currentTableId'); //表格重载
+                        layer.closeAll();
+                    }
+                },
+                error: function(err) {
+                    layer.msg(err.statusText);
+                }
+            });
+            return false;
+        });
+
+        /**
+         * 修改方法
+         */
+        form.on('submit(editform_submit)', function(data) {
+            $.ajax({
+                url: '<{:url("teacherupdate")}>',
+                type: 'post',
+                headers:{
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: data.field,
+                success: function(res) {
+                    $('meta[name="csrf-token"]').attr('content', res.token); //刷新令牌
+                    if(res.code < 0) {
+                        layer.msg('操作失败');
+                    }else {
+                        layer.msg('操作成功');
+                        table.reload('currentTableId'); //表格重载
+                        layer.closeAll();
+                    }
+                },
+                error: function(err) {
+                    layer.msg(err.statusText);
+                }
+            });
+            return false;
+        });
+
+        //删除方法
+        var deleted = function(id) {
+            if(id.length <= 0) {
+                layer.msg('请选中教师进行删除');
+                return;
+            }
+            var param = {
+                id: id
+            };
+            $.ajax({
+                url: '<{:url("teacherdelete")}>',
+                type: 'post',
+                data: param,
+                success: function(res) {
+                    if(res.code < 0) {
+                        layer.msg('操作失败');
+                    }else {
+                        layer.msg('操作成功');
+                        table.reload('currentTableId'); //表格重载
+                    }
+                },
+                error: function(err) {
+                    layer.msg(err.statusText);
+                }
+            });
+        };
+    });
+</script>
+<script>
+
+</script>
+
+</body>
+</html>
