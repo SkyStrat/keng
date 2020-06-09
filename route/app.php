@@ -62,6 +62,11 @@ Route::group('/', function() {
    Route::post('userreload', 'UserController/reloadPassword')->name('userreload'); //重置密码
    /******************* 用户管理end ********************/
 
+
+    /******************* 通知管理start ********************/
+    Route::get('notify', 'NotifyController/index')->name('notify'); //通知管理
+    /******************* 通知管理end **********************/
+
    /******************* 学生基本信息管理start ********************/
    Route::get('student', 'StudentController/index')->name('student'); //学生基本信息管理
    Route::get('studentlist', 'StudentController/queryList')->name('studentlist'); //学生列表
