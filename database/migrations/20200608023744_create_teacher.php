@@ -43,6 +43,7 @@ class CreateTeacher extends Migrator
             ->addColumn('create_account', 'string', array('length'=>50, 'default'=>'', 'null'=>false, 'comment'=>'创建人账号'))
             ->addColumn('create_name', 'string', array('length'=>50, 'default'=>'', 'null'=>false, 'comment'=>'创建人'))
             ->addColumn('deleted_time', 'timestamp', array('null'=>true, 'comment'=>'删除时间'))
+            ->addIndex('teacher_no', array('unique' => true))
             ->addTimestamps()
             ->create();
     }
