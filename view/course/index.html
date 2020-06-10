@@ -66,6 +66,9 @@
                 <div class="layui-input-block" style="margin-left: 110px !important">
                     <select name="grade_id">
                         <option value="0">全部</option>
+                        <{foreach $grade as $value}>
+                        <option value="<{$value['id']}>"><{$value['name']}></option>
+                        <{/foreach}>
                     </select>
                 </div>
             </div>
@@ -87,6 +90,9 @@
                 <div class="layui-input-block" style="margin-left: 110px !important">
                     <select name="grade_id">
                         <option value="0">全部</option>
+                        <{foreach $grade as $value}>
+                        <option value="<{$value['id']}>"><{$value['name']}></option>
+                        <{/foreach}>
                     </select>
                 </div>
             </div>
@@ -154,7 +160,7 @@
                     type: 1,
                     shade: 0.2,
                     shadeClose: true,
-                    area: ['500px', '250px'],
+                    area: ['500px', '300px'],
                     content: $('#addform'),
                     yes: function(index, layero) {
                         $('#addform_submit').click();
@@ -194,7 +200,7 @@
                     type: 1,
                     shade: 0.2,
                     shadeClose: true,
-                    area: ['500px', '250px'],
+                    area: ['500px', '300px'],
                     content: $('#editform'),
                     yes: function(index, layero) {
                         $('#editform_submit').click();

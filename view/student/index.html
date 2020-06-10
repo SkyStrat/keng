@@ -90,7 +90,12 @@
             <div class="layui-form-item">
                 <label class="layui-form-label required" style="width: 80px !important;">年级</label>
                 <div class="layui-input-block" style="margin-left: 110px !important">
-                    <input type="text" name="grade" placeholder="请输入年级" lay-verify="required" value="" class="layui-input">
+                    <select name="grade">
+                        <option value="">请选择年级</option>
+                        <{foreach $grade as $value}>
+                        <option value="<{$value['id']}>"><{$value['name']}></option>
+                        <{/foreach}>
+                    </select>
                 </div>
             </div>
             <div class="layui-form-item">
@@ -199,7 +204,12 @@
             <div class="layui-form-item">
                 <label class="layui-form-label required" style="width: 80px !important;">年级</label>
                 <div class="layui-input-block" style="margin-left: 110px !important">
-                    <input type="text" name="grade" placeholder="请输入年级" lay-verify="required" value="" class="layui-input">
+                    <select name="grade">
+                        <option value="">请选择年级</option>
+                        <{foreach $grade as $value}>
+                        <option value="<{$value['id']}>"><{$value['name']}></option>
+                        <{/foreach}>
+                    </select>
                 </div>
             </div>
             <div class="layui-form-item">
@@ -246,7 +256,7 @@
                     <select name="responsible" lay-verify="required" lay-filter="responsibleSelect">
                         <option value="">请选择负责老师</option>
                         <{foreach $teacher as $value}>
-                        <option value="<{$value['account']}>-<{$value['username']}>"><{$value['username']}></option>
+                        <option value="<{$value['id']}>-<{$value['name']}>"><{$value['name']}></option>
                         <{/foreach}>
                     </select>
                 </div>
@@ -283,7 +293,9 @@
             },
             cols: [[
                 {type: "checkbox", width: 50, fixed: "left"},
-                {field: 'grade', width: 80, title: '年级'},
+                {field: 'grades', width: 80, title: '年级', templet: function(d) {
+                    return d.grades.name;
+                    }},
                 {field: 'class', width: 80, title: '班级'},
                 {field: 'student_no', width: 80, title: '学号'},
                 {field: 'name', width: 120, title: '姓名'},
@@ -338,7 +350,7 @@
                 collanum = 0;
                 layer.open({
                     btn: ['提交', '关闭'],
-                    title: '添加用户',
+                    title: '添加学生',
                     type: 1,
                     shade: 0.2,
                     shadeClose: true,
@@ -358,7 +370,7 @@
                     str += item.name+",";
                 });
                 str = str.substring(0,str.length-1);
-                layer.confirm('是否删除用户：'+str, function (index) {
+                layer.confirm('是否删除学生：'+str, function (index) {
                     deleted(batch_delete);
                     layer.close(index);
                 });
@@ -385,7 +397,7 @@
                 element.init(); //初始化layui组件
                 layer.open({
                     btn: ['提交', '关闭'],
-                    title: '修改用户',
+                    title: '修改学生',
                     type: 1,
                     shade: 0.2,
                     shadeClose: true,
@@ -398,7 +410,7 @@
                 });
             } else if (obj.event === 'delete') {
                 batch_delete = [data.id];
-                layer.confirm('是否删除用户：'+data.name, function (index) {
+                layer.confirm('是否删除学生：'+data.name, function (index) {
                     deleted(batch_delete);
                     layer.close(index);
                 });

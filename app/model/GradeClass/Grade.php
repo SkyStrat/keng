@@ -40,4 +40,9 @@ class Grade extends Model
 
         return $where;
     }
+
+    public function getGrade($field = '*', $where = [])
+    {
+        return $this->field($field)->where($where)->select();
+    }
 }

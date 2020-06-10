@@ -47,4 +47,8 @@ class Teacher extends Model
 
         return $where;
     }
+
+    public function getTeacher($field = '*', $where = []) {
+        return $this->field($field)->where($where)->select();
+    }
 }

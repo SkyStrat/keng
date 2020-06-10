@@ -10,8 +10,10 @@ namespace app\controller;
 
 
 use app\model\Course\Course;
+use app\model\GradeClass\Grade;
 use think\App;
 use think\exception\HttpException;
+use think\facade\View;
 
 class CourseController extends Controller
 {
@@ -24,8 +26,15 @@ class CourseController extends Controller
         $this->model = new Course();
     }
 
+
     public function index()
     {
+        $grade_model = new Grade();
+        $list = $grade_model->getGrade('id,name')->toArray();
+        View::assign([
+            'grade' => $list
+        ]);
+        unset($grade_model); //清理资源
         return $this->app->view->fetch('course/index');
     }
 

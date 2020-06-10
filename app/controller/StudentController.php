@@ -9,8 +9,9 @@
 namespace app\controller;
 
 
+use app\model\GradeClass\Grade;
 use app\model\Student\{Parents,Student,StudentOld};
-use app\model\User\User;
+use app\model\Teacher\Teacher;
 use think\App;
 use think\exception\HttpException;
 use think\facade\View;
@@ -35,12 +36,16 @@ class StudentController extends Controller
      */
     public function index()
     {
-        $user_model = new User();
-        $info = $user_model->getTeacherRoleUser('account,username');
+        $teacher_model = new Teacher();
+        $info = $teacher_model->getTeacher('id,name,teacher_no');
+
+        $grade_model = new Grade();
+        $list = $grade_model->getGrade('id,name');
         View::assign([
-            'teacher' => $info
+            'teacher' => $info,
+            'grade' => $list
         ]);
-        unset($user_model); //清理资源
+        unset($teacher_model,$grade_model); //清理资源
         return $this->app->view->fetch('student/index');
     }
 
@@ -61,7 +66,7 @@ class StudentController extends Controller
         }
         $where = $this->model->buildWhere($data);
 
-        $list = $this->model->with(['parents'])->where(function($query) {
+        $list = $this->model->with(['parents','grades'])->where(function($query) {
             $query->whereOr('responsible_account',$this->userInfo['account'])->whereOr('responsible_account','');
         })->where($where)->where([['status','in','0,1']])->order(['create_time'])->paginate($limit)->toArray();
 
@@ -262,7 +267,7 @@ class StudentController extends Controller
                 $param_teacher = $this->request->post('teacher_info');
 
                 $teacher_arr = explode('-',$param_teacher);
-                $result = $this->model->where([['id','in',$is_str]])->update(['responsible_account'=>$teacher_arr[0], 'responsible_name'=>$teacher_arr[1], 'status'=>1]);
+                $result = $this->model->where([['id','in',$is_str]])->update(['responsible_id'=>$teacher_arr[0], 'responsible_name'=>$teacher_arr[1], 'status'=>1]);
             }else {
                 $this->transfer($param_id, $param_type); //转移操作
             }
@@ -284,7 +289,7 @@ class StudentController extends Controller
     private function transfer($param,$type)
     {
         $id_str = !is_array($param) ?: implode(',',$param);
-        $student_info = $this->model->field('id,name,sex,age,gradeClass,class,address,home_phone,remark,responsible_account,responsible_name')->where([['id','in',$id_str]])->select()->toArray();
+        $student_info = $this->model->field('id,name,sex,age,gradeClass,class,address,home_phone,remark,responsible_id,responsible_name')->where([['id','in',$id_str]])->select()->toArray();
 
         $this->model->startTrans(); //开启事务
         try {
