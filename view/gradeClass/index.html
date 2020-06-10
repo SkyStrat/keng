@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>layui</title>
-    <meta name="csrf-token" content="<{:token('__coursetoken__')}>">
+    <meta name="csrf-token" content="<{:token('__gradetoken__')}>">
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -20,13 +20,7 @@
                 <form class="layui-form layui-form-pane" action="">
                     <div class="layui-form-item">
                         <div class="layui-inline">
-                            <label class="layui-form-label">课程编号</label>
-                            <div class="layui-input-inline">
-                                <input type="text" id="s_course_no" autocomplete="off" class="layui-input">
-                            </div>
-                        </div>
-                        <div class="layui-inline">
-                            <label class="layui-form-label">课程名称</label>
+                            <label class="layui-form-label">年级名称</label>
                             <div class="layui-input-inline">
                                 <input type="text" id="s_name" autocomplete="off" class="layui-input">
                             </div>
@@ -41,7 +35,7 @@
 
         <script type="text/html" id="toolbarDemo">
             <div class="layui-btn-container">
-                <button class="layui-btn layui-btn-sm data-add-btn" lay-event="add"> 添加课程 </button>
+                <button class="layui-btn layui-btn-sm data-add-btn" lay-event="add"> 添加年级 </button>
                 <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"> 批量删除 </button>
             </div>
         </script>
@@ -53,41 +47,25 @@
             <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>
         </script>
 
-        <!----------------- 添加课程弹出层start ----------------->
+        <!----------------- 添加年级弹出层start ----------------->
         <form class="layui-form layuimini-form" id="addform" lay-filter="addform" style="display: none;margin: 10px 70px 0 5px;">
             <div class="layui-form-item">
-                <label class="layui-form-label required" style="width: 80px !important;">课程名称</label>
+                <label class="layui-form-label required" style="width: 80px !important;">年级名称</label>
                 <div class="layui-input-block" style="margin-left: 110px !important">
-                    <input type="text" name="name" placeholder="请输入课程名称" class="layui-input" lay-verify="required">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label" style="width: 80px !important;">锁定年级</label>
-                <div class="layui-input-block" style="margin-left: 110px !important">
-                    <select name="grade_id">
-                        <option value="0">全部</option>
-                    </select>
+                    <input type="text" name="name" placeholder="请输入年级名称" class="layui-input" lay-verify="required">
                 </div>
             </div>
             <a style="display: none;" id="addform_submit" lay-submit lay-filter="addform_submit"></a>
         </form>
-        <!----------------- 添加课程弹出层end ----------------->
+        <!----------------- 添加年级弹出层end ----------------->
 
         <!----------------- 修改课程弹出层start ----------------->
         <form class="layui-form layuimini-form" id="editform" lay-filter="editform" style="display: none;margin: 10px 70px 0 5px;">
             <input type="hidden" name="id" class="layui-input">
             <div class="layui-form-item">
-                <label class="layui-form-label required" style="width: 80px !important;">课程名称</label>
+                <label class="layui-form-label required" style="width: 80px !important;">年级名称</label>
                 <div class="layui-input-block" style="margin-left: 110px !important">
-                    <input type="text" name="name" placeholder="请输入课程名称" class="layui-input" lay-verify="required">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label" style="width: 80px !important;">锁定年级</label>
-                <div class="layui-input-block" style="margin-left: 110px !important">
-                    <select name="grade_id">
-                        <option value="0">全部</option>
-                    </select>
+                    <input type="text" name="name" placeholder="请输入年级名称" class="layui-input" lay-verify="required">
                 </div>
             </div>
             <a style="display: none;" id="editform_submit" lay-submit lay-filter="editform_submit"></a>
@@ -106,7 +84,7 @@
 
         table.render({
             elem: '#currentTableId',
-            url: '<{:url("courselist")}>',
+            url: '<{:url("gradelist")}>',
             toolbar: '#toolbarDemo',
             defaultToolbar: [],
             parseData: function(res){ //res 即为原始返回的数据
@@ -119,9 +97,7 @@
             },
             cols: [[
                 {type: "checkbox", width: 50, fixed: "left"},
-                {field: 'course_no', width: 80, title: '课程编号'},
-                {field: 'name', width: 80, title: '课程名称'},
-                {field: 'grade_id', width: 80, title: '年级id'},
+                {field: 'name', width: 80, title: '年级名称'},
                 {title: '操作', minWidth: 50, templet: '#currentTableBar', fixed: "right", align: "center"}
             ]],
             limits: [10, 15, 20, 25, 50, 100],
@@ -132,7 +108,6 @@
         // 搜索操作
         $('#search').click(function(d) {
             var param = {
-                course_no: $('#s_course_no').val(),
                 name: $('#s_name').val()
             };
             table.reload('currentTableId', {
@@ -150,11 +125,11 @@
 
                 layer.open({
                     btn: ['提交', '关闭'],
-                    title: '添加课程',
+                    title: '添加年级',
                     type: 1,
                     shade: 0.2,
                     shadeClose: true,
-                    area: ['500px', '250px'],
+                    area: ['500px', '200px'],
                     content: $('#addform'),
                     yes: function(index, layero) {
                         $('#addform_submit').click();
@@ -169,7 +144,7 @@
                     str += item.name+",";
                 });
                 str = str.substring(0,str.length-1);
-                layer.confirm('是否删除课程：'+str, function (index) {
+                layer.confirm('是否删除年级：'+str, function (index) {
                     deleted(batch_delete);
                     layer.close(index);
                 });
@@ -185,16 +160,15 @@
                 form.val("editform", {
                     "id": data.id,
                     "name": data.name,
-                    "grade_id": data.grade_id,
                 });
                 form.render(); //更新渲染
                 layer.open({
                     btn: ['提交', '关闭'],
-                    title: '修改课程',
+                    title: '修改年级',
                     type: 1,
                     shade: 0.2,
                     shadeClose: true,
-                    area: ['500px', '250px'],
+                    area: ['500px', '200px'],
                     content: $('#editform'),
                     yes: function(index, layero) {
                         $('#editform_submit').click();
@@ -202,7 +176,7 @@
                 });
             } else if (obj.event === 'delete') {
                 batch_delete = [data.id];
-                layer.confirm('是否删除课程：'+data.name, function (index) {
+                layer.confirm('是否删除年级：'+data.name, function (index) {
                     deleted(batch_delete);
                     layer.close(index);
                 });
@@ -214,7 +188,7 @@
          */
         form.on('submit(addform_submit)', function(data) {
             $.ajax({
-                url: '<{:url("courseadd")}>',
+                url: '<{:url("gradeadd")}>',
                 type: 'post',
                 headers:{
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -242,7 +216,7 @@
          */
         form.on('submit(editform_submit)', function(data) {
             $.ajax({
-                url: '<{:url("courseupdate")}>',
+                url: '<{:url("gradeupdate")}>',
                 type: 'post',
                 headers:{
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -268,14 +242,14 @@
         //删除方法
         var deleted = function(id) {
             if(id.length <= 0) {
-                layer.msg('请选中课程进行删除');
+                layer.msg('请选中年级进行删除');
                 return;
             }
             var param = {
                 id: id
             };
             $.ajax({
-                url: '<{:url("coursedelete")}>',
+                url: '<{:url("gradedelete")}>',
                 type: 'post',
                 data: param,
                 success: function(res) {

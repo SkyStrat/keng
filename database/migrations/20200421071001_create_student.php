@@ -33,7 +33,7 @@ class CreateStudent extends Migrator
             ->addColumn('sex', 'integer', array('length'=>1, 'default'=>0, 'null'=>false, 'comment'=>'性别  0:男  1:女'))
             ->addColumn('age', 'integer', array('default'=>0, 'null'=>false, 'comment'=>'年龄'))
             ->addColumn('student_no', 'integer', array('default'=>0, 'null'=>false, 'comment'=>'学号'))
-            ->addColumn('grade', 'string', array('length'=>100, 'default'=>'', 'null'=>false, 'comment'=>'年级'))
+            ->addColumn('gradeClass', 'string', array('length'=>100, 'default'=>'', 'null'=>false, 'comment'=>'年级'))
             ->addColumn('class', 'string', array('length'=>50, 'default'=>'', 'null'=>false, 'comment'=>'班级'))
             ->addColumn('address', 'string', array('length'=>250, 'default'=>'', 'null'=>false, 'comment'=>'家庭住址'))
             ->addColumn('home_phone', 'string', array('length'=>50, 'default'=>'', 'null'=>false, 'comment'=>'家庭电话'))
@@ -45,7 +45,7 @@ class CreateStudent extends Migrator
             ->addColumn('create_name', 'string', array('length'=>50, 'default'=>'', 'null'=>false, 'comment'=>'创建人'))
             ->addTimestamps()
             ->addIndex('student_no')
-            ->addIndex(['grade','class'])
+            ->addIndex(['gradeClass','class'])
             ->create();
     }
 }

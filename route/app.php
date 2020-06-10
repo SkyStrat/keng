@@ -92,6 +92,14 @@ Route::group('/', function() {
     Route::post('coursedelete', 'CourseController/deleteCourse')->name('coursedelete'); //删除课程
    /******************* 课程设置end ********************/
 
+   /******************* 年级设置start ********************/
+    Route::get('grade', 'GradeController/index')->name('grade'); //年级设置
+    Route::get('gradelist', 'GradeController/queryList')->name('gradelist'); //年级设置
+    Route::post('gradeadd', 'GradeController/addGrade')->name('gradeadd')->token('__gradetoken__'); //添加年级
+    Route::post('gradeupdate', 'GradeController/updateGrade')->name('gradeupdate')->token('__gradetoken__'); //修改年级
+    Route::post('gradedelete', 'GradeController/deleteGrade')->name('gradedelete'); //删除年级
+   /******************* 年级设置end ********************/
+
    Route::get('auth', 'AuthController/getMenus')->name('auth'); //获取权限
    Route::post('updatepassword', 'LoginController/updatePassword')->name('updatepassword'); //首页修改密码
 })->middleware(AuthPermission::class);

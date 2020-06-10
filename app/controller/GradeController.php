@@ -3,34 +3,34 @@
  * Created by PhpStorm.
  * User: Administrator
  * Date: 2020/6/9
- * Time: 18:05
+ * Time: 20:03
  */
 
 namespace app\controller;
 
 
-use app\model\Course\Course;
+use app\model\GradeClass\Grade;
 use think\App;
 use think\exception\HttpException;
 
-class CourseController extends Controller
+class GradeController extends Controller
 {
     private $model;
-    private $arr_query_search = array('course_no','name');
+    private $arr_query_search = array('name');
 
     public function __construct(App $app)
     {
         parent::__construct($app);
-        $this->model = new Course();
+        $this->model = new Grade();
     }
 
     public function index()
     {
-        return $this->app->view->fetch('course/index');
+        return $this->app->view->fetch('gradeClass/index');
     }
 
     /**
-     * 课程设置列表
+     * 年级设置列表
      * @return \think\response\Json
      * @throws \think\db\exception\DbException
      */
@@ -54,19 +54,18 @@ class CourseController extends Controller
     }
 
     /**
-     * 添加课程
+     * 添加年级
      * @return \think\response\Json
      */
-    public function addCourse()
+    public function addGrade()
     {
-        $data_course = array(
-            'course_no' => 'KC'.date('Ymd').substr(explode(' ', microtime())[0],-4),
+        $data_grade = array(
             'create_account' => $this->userInfo['account'],
             'create_name' => $this->userInfo['username']
         );
-        $data_course = array_merge($this->request->param(), $data_course);
+        $data_grade = array_merge($this->request->param(), $data_grade);
 
-        $result = $this->model->create($data_course);
+        $result = $this->model->create($data_grade);
         if(!$result) {
             $this->result['code'] = -1;
             $this->result['message'] = '添加失败:'.$this->model->getLastSql();
@@ -77,28 +76,28 @@ class CourseController extends Controller
     }
 
     /**
-     * 修改课程
+     * 修改年级
      * @return \think\response\Json
      */
-    public function updateCourse()
+    public function updateGrade()
     {
-        $data_course = $this->request->param();
+        $data_grade = $this->request->param();
 
-        $result = $this->model->where(['id'=>$data_course['id']])->update($data_course);
+        $result = $this->model->where(['id'=>$data_grade['id']])->update($data_grade);
 
         $this->refreshToken(); //刷新令牌
         return $this->jsonResult();
     }
 
     /**
-     * 删除课程
+     * 删除年级
      * @return \think\response\Json
      */
-    public function deleteCourse()
+    public function deleteGrade()
     {
         if($this->request->isPost()) {
             $data = $this->request->post('id');
-            $result = Course::destroy($data); //软删除操作
+            $result = Grade::destroy($data);
             if(!$result) {
                 $this->result['code'] = -1;
                 $this->result['message'] = 'fail | '.$this->model->getLastSql();
@@ -115,6 +114,6 @@ class CourseController extends Controller
      */
     private function refreshToken()
     {
-        return $this->result['token'] = $this->request->buildToken('__coursetoken__');
+        return $this->result['token'] = $this->request->buildToken('__gradetoken__');
     }
 }

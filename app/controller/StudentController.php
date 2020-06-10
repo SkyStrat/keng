@@ -78,7 +78,7 @@ class StudentController extends Controller
     public function addStudent()
     {
         $data_student = $this->request->param();
-        $student_no = $this->model->getStudentNo($data_student['grade'],$data_student['class']);
+        $student_no = $this->model->getStudentNo($data_student['gradeClass'],$data_student['class']);
         $data_student['student_no'] = isset($student_no['student_no']) ? $student_no['student_no']++ : 1;
         $data_student['create_account'] = $this->userInfo['account'];
         $data_student['create_name'] = $this->userInfo['username'];
@@ -284,7 +284,7 @@ class StudentController extends Controller
     private function transfer($param,$type)
     {
         $id_str = !is_array($param) ?: implode(',',$param);
-        $student_info = $this->model->field('id,name,sex,age,grade,class,address,home_phone,remark,responsible_account,responsible_name')->where([['id','in',$id_str]])->select()->toArray();
+        $student_info = $this->model->field('id,name,sex,age,gradeClass,class,address,home_phone,remark,responsible_account,responsible_name')->where([['id','in',$id_str]])->select()->toArray();
 
         $this->model->startTrans(); //开启事务
         try {
