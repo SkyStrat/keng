@@ -9,6 +9,7 @@
 namespace app\model\Course;
 
 
+use app\model\GradeClass\Grade;
 use think\Model;
 use think\model\concern\SoftDelete;
 
@@ -22,6 +23,11 @@ class Course extends Model
     protected $updateTime = 'update_time'; //更新时间字段名
     protected $autoWriteTimestamp = 'timestamp'; //自动写入创建时间和更新时间
     protected $deleteTime = 'deleted_time'; //软删除字段，规定是时间类型
+
+    public function grades()
+    {
+        return $this->hasOne(Grade::class, 'id', 'grade_id');
+    }
 
     /**
      * where条件

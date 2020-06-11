@@ -130,9 +130,11 @@
             },
             cols: [[
                 {type: "checkbox", width: 50, fixed: "left"},
-                {field: 'name', width: 80, title: '班级名称'},
-                {field: 'grade_id', width: 80, title: '年级名称'},
-                {title: '操作', minWidth: 50, templet: '#currentTableBar', fixed: "right", align: "center"}
+                {field: 'name', minWidth: 120, title: '班级名称'},
+                {field: 'grades', width: 120, title: '年级名称', templet: function(d) {
+                    return d.grades.name;
+                    }},
+                {title: '操作', width: 120, templet: '#currentTableBar', fixed: "right", align: "center"}
             ]],
             limits: [10, 15, 20, 25, 50, 100],
             limit: 15,

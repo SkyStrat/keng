@@ -125,10 +125,16 @@
             },
             cols: [[
                 {type: "checkbox", width: 50, fixed: "left"},
-                {field: 'course_no', width: 80, title: '课程编号'},
-                {field: 'name', width: 80, title: '课程名称'},
-                {field: 'grade_id', width: 80, title: '年级id'},
-                {title: '操作', minWidth: 50, templet: '#currentTableBar', fixed: "right", align: "center"}
+                {field: 'course_no', width: 160, title: '课程编号'},
+                {field: 'name', minWidth: 120, title: '课程名称'},
+                {field: 'grades', width: 120, title: '年级', templet: function(d) {
+                    if(d.grade_id == 0) {
+                        return '无年级限制';
+                    }else {
+                        return d.grades.name;
+                    }
+                    }},
+                {title: '操作', width: 120, templet: '#currentTableBar', fixed: "right", align: "center"}
             ]],
             limits: [10, 15, 20, 25, 50, 100],
             limit: 15,

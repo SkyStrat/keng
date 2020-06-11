@@ -221,8 +221,8 @@
             },
             cols: [[
                 {type: "checkbox", width: 50, fixed: "left"},
-                {field: 'teacher_no', width: 80, title: '教师编号'},
-                {field: 'name', width: 80, title: '教师名称'},
+                {field: 'teacher_no', width: 190, title: '教师编号'},
+                {field: 'name', width: 120, title: '教师名称'},
                 {field: 'sex', width: 80, title: '性别', templet: function(d) {
                     if(d.sex == 0) {
                         return '男';
@@ -237,7 +237,7 @@
                 {field: 'qq', width: 120, title: 'QQ号'},
                 {field: 'urgent_name', width: 120, title: '紧急联系人'},
                 {field: 'urgent_phone', width: 120, title: '紧急联系方式'},
-                {title: '操作', minWidth: 50, templet: '#currentTableBar', fixed: "right", align: "center"}
+                {title: '操作', minWidth: 120, templet: '#currentTableBar', fixed: "right", align: "center"}
             ]],
             limits: [10, 15, 20, 25, 50, 100],
             limit: 15,

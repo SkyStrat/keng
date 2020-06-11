@@ -56,7 +56,7 @@ class CourseController extends Controller
         }
         $where = $this->model->buildWhere($data);
 
-        $list = $this->model->where($where)->order(['create_time'])->paginate($limit)->toArray();
+        $list = $this->model->with(['grades'])->where($where)->order(['create_time'])->paginate($limit)->toArray();
 
         $this->result = array_merge($this->result, $list);
         return $this->jsonResult();
