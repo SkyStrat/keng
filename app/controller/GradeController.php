@@ -9,6 +9,7 @@
 namespace app\controller;
 
 
+use app\model\GradeClass\Classes;
 use app\model\GradeClass\Grade;
 use think\App;
 use think\exception\HttpException;
@@ -97,10 +98,23 @@ class GradeController extends Controller
     {
         if($this->request->isPost()) {
             $data = $this->request->post('id');
-            $result = Grade::destroy($data);
-            if(!$result) {
+            $this->model->startTrans(); //开启事务
+            try {
+                $result = $this->model->destroy($data);
+                $classes_model = new Classes();
+                $result1 = $classes_model->where([['grade_id','in',implode(',', $data)]])->delete();
+                if($result && $result1 >= 0) {
+                    $this->model->commit();
+                }else {
+                    $this->model->rollback();
+                    $this->result['code'] = -1;
+                    $this->result['message'] = '删除失败 | '.$this->model->getLastSql().'--------'.$classes_model->getLastSql();
+                }
+                unset($classes_model); //清除资源
+            }catch (\Exception $e) {
+                $this->model->rollback();
                 $this->result['code'] = -1;
-                $this->result['message'] = 'fail | '.$this->model->getLastSql();
+                $this->result['message'] = 'code:'.$e->getCode().'-----message:'.$e->getMessage();
             }
             return $this->jsonResult();
         }else {

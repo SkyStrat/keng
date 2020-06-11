@@ -144,7 +144,7 @@
                     str += item.name+",";
                 });
                 str = str.substring(0,str.length-1);
-                layer.confirm('是否删除年级：'+str, function (index) {
+                layer.confirm('是否删除年级：'+str+'；连同该年级下的班级都删除', function (index) {
                     deleted(batch_delete);
                     layer.close(index);
                 });
@@ -176,7 +176,7 @@
                 });
             } else if (obj.event === 'delete') {
                 batch_delete = [data.id];
-                layer.confirm('是否删除年级：'+data.name, function (index) {
+                layer.confirm('是否删除年级：'+data.name+'；连同该年级下的班级都删除', function (index) {
                     deleted(batch_delete);
                     layer.close(index);
                 });
