@@ -90,7 +90,7 @@
             <div class="layui-form-item">
                 <label class="layui-form-label required" style="width: 80px !important;">年级</label>
                 <div class="layui-input-block" style="margin-left: 110px !important">
-                    <select name="grade">
+                    <select name="grade" lay-filter="grade_add">
                         <option value="">请选择年级</option>
                         <{foreach $grade as $value}>
                         <option value="<{$value['id']}>"><{$value['name']}></option>
@@ -101,7 +101,10 @@
             <div class="layui-form-item">
                 <label class="layui-form-label required" style="width: 80px !important;">班级</label>
                 <div class="layui-input-block" style="margin-left: 110px !important">
-                    <input type="text" name="class" placeholder="请输入班级" lay-verify="required" value="" class="layui-input">
+                    <!--<input type="text" name="class" placeholder="请输入班级" lay-verify="required" value="" class="layui-input">-->
+                    <select name="class" id="class_add" lay-filter="class_add">
+                        <option value="">请选择班级</option>
+                    </select>
                 </div>
             </div>
             <div class="layui-form-item">
@@ -215,7 +218,10 @@
             <div class="layui-form-item">
                 <label class="layui-form-label required" style="width: 80px !important;">班级</label>
                 <div class="layui-input-block" style="margin-left: 110px !important">
-                    <input type="text" name="class" placeholder="请输入班级" lay-verify="required" value="" class="layui-input">
+                    <!--<input type="text" name="class" placeholder="请输入班级" lay-verify="required" value="" class="layui-input">-->
+                    <select name="class" id="class_edit" lay-filter="class_edit">
+                        <option value="">请选择班级</option>
+                    </select>
                 </div>
             </div>
             <div class="layui-form-item">
@@ -277,6 +283,7 @@
         var collanum = 0;
         var responsibleSelectData = '';
         var batch_teacher_id = [];
+        var classes_list = JSON.parse('<{$classes}>');
 
         table.render({
             elem: '#currentTableId',
@@ -296,7 +303,9 @@
                 {field: 'grades', width: 80, title: '年级', templet: function(d) {
                     return d.grades.name;
                     }},
-                {field: 'class', width: 80, title: '班级'},
+                {field: 'classes', width: 80, title: '班级', templet: function(d) {
+                    return d.classes.name;
+                    }},
                 {field: 'student_no', width: 80, title: '学号'},
                 {field: 'name', width: 120, title: '姓名'},
                 {field: 'sex', width: 80, title: '性别', templet: function(d) {
@@ -382,6 +391,7 @@
             var data = obj.data;
             if (obj.event === 'edit') {
                 $('#editform')[0].reset();
+                classesoption(data.grade); //初始化班级下拉列表数据
                 form.val("editform", {
                     "id" : data.id,
                     "name": data.name,
@@ -392,7 +402,7 @@
                     "home_phone": data.home_phone,
                     "address": data.address
                 });
-                updateshow(data.parents);
+                updateshow(data.parents); //初始化家庭成员数据
                 form.render(); //更新渲染
                 element.init(); //初始化layui组件
                 layer.open({
@@ -446,6 +456,16 @@
 
         form.on('select(responsibleSelect)', function(data){
             responsibleSelectData = data.value;
+        });
+        form.on('select(grade_add)', function(data) {
+            var html = '<option value="">请选择班级</option>';
+            $.each(classes_list, function(i,item) {
+                if(item['grade_id'] == data.value) {
+                    html += '<option value="'+item['id']+'">'+item['name']+'</option>';
+                }
+            });
+            document.getElementById('class_add').innerHTML = html;
+            form.render('select');
         });
 
         //添加方法
@@ -645,6 +665,18 @@
             });
             collanum--;
             $('#colla_list_edit')[0].innerHTML += html_code;
+        }
+
+        //初始化班级下拉列表数据
+        var classesoption = function(grade) {
+            var html = '<option value="">请选择班级</option>';
+            $.each(classes_list, function(i,item) {
+                if(item['grade_id'] == grade) {
+                    html += '<option value="'+item['id']+'">'+item['name']+'</option>';
+                }
+            });
+            document.getElementById('class_edit').innerHTML = html;
+            form.render('select');
         }
     });
 

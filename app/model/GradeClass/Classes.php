@@ -43,4 +43,9 @@ class Classes extends Model
 
         return $where;
     }
+
+    public function getClasses($field = '*', $where = [])
+    {
+        return $this->field($field)->where($where)->select();
+    }
 }

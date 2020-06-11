@@ -9,6 +9,7 @@
 namespace app\model\Student;
 
 
+use app\model\GradeClass\Classes;
 use app\model\GradeClass\Grade;
 use think\Model;
 
@@ -28,6 +29,11 @@ class Student extends Model
     public function grades()
     {
         return $this->hasOne(Grade::class, 'id', 'grade');
+    }
+
+    public function classes()
+    {
+        return $this->hasOne(Classes::class, 'id', 'class');
     }
 
     /**
