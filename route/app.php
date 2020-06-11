@@ -94,11 +94,19 @@ Route::group('/', function() {
 
    /******************* 年级设置start ********************/
     Route::get('grade', 'GradeController/index')->name('grade'); //年级设置
-    Route::get('gradelist', 'GradeController/queryList')->name('gradelist'); //年级设置
+    Route::get('gradelist', 'GradeController/queryList')->name('gradelist'); //年级设置列表
     Route::post('gradeadd', 'GradeController/addGrade')->name('gradeadd')->token('__gradetoken__'); //添加年级
     Route::post('gradeupdate', 'GradeController/updateGrade')->name('gradeupdate')->token('__gradetoken__'); //修改年级
     Route::post('gradedelete', 'GradeController/deleteGrade')->name('gradedelete'); //删除年级
    /******************* 年级设置end ********************/
+
+   /******************* 班级设置start ********************/
+    Route::get('classes', 'ClassesController/index')->name('classes'); //班级设置
+    Route::get('classeslist', 'ClassesController/queryList')->name('classeslist'); //班级设置列表
+    Route::post('classesadd', 'ClassesController/addClasses')->name('classesadd')->token('__classestoken__'); //添加班级
+    Route::post('classesupdate', 'ClassesController/updateClasses')->name('classesupdate')->token('__classestoken__'); //修改班级
+    Route::post('classesdelete', 'ClassesController/deleteClasses')->name('classesdelete'); //删除班级
+   /******************* 班级设置end ********************/
 
    Route::get('auth', 'AuthController/getMenus')->name('auth'); //获取权限
    Route::post('updatepassword', 'LoginController/updatePassword')->name('updatepassword'); //首页修改密码

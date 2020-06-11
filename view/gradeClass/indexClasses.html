@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>layui</title>
+    <meta name="csrf-token" content="<{:token('__classestoken__')}>">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="__STATIC__/layuimini/lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="__STATIC__/layuimini/css/public.css" media="all">
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+
+        <fieldset class="table-search-fieldset">
+            <legend>搜索信息</legend>
+            <div style="margin: 10px 10px 10px 10px">
+                <form class="layui-form layui-form-pane" action="">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">班级名称</label>
+                            <div class="layui-input-inline">
+                                <input type="text" id="s_name" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">年级</label>
+                            <div class="layui-input-inline">
+                                <select id="s_grade">
+                                    <option value="">请选择年级</option>
+                                    <{foreach $grade as $value}>
+                                    <option value="<{$value['id']}>"><{$value['name']}></option>
+                                    <{/foreach}>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <a class="layui-btn layui-btn-primary" id="search"><i class="layui-icon"></i> 搜 索</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </fieldset>
+
+        <script type="text/html" id="toolbarDemo">
+            <div class="layui-btn-container">
+                <button class="layui-btn layui-btn-sm data-add-btn" lay-event="add"> 添加年级 </button>
+                <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"> 批量删除 </button>
+            </div>
+        </script>
+
+        <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+
+        <script type="text/html" id="currentTableBar">
+            <a class="layui-btn layui-btn-xs data-count-edit" lay-event="edit">编辑</a>
+            <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>
+        </script>
+
+        <!----------------- 添加班级弹出层start ----------------->
+        <form class="layui-form layuimini-form" id="addform" lay-filter="addform" style="display: none;margin: 10px 70px 0 5px;">
+            <div class="layui-form-item">
+                <label class="layui-form-label required" style="width: 80px !important;">班级名称</label>
+                <div class="layui-input-block" style="margin-left: 110px !important">
+                    <input type="text" name="name" placeholder="请输入班级名称" class="layui-input" lay-verify="required">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width: 80px !important;">锁定年级</label>
+                <div class="layui-input-block" style="margin-left: 110px !important">
+                    <select name="grade_id">
+                        <option value="0">请选择年级</option>
+                        <{foreach $grade as $value}>
+                        <option value="<{$value['id']}>"><{$value['name']}></option>
+                        <{/foreach}>
+                    </select>
+                </div>
+            </div>
+            <a style="display: none;" id="addform_submit" lay-submit lay-filter="addform_submit"></a>
+        </form>
+        <!----------------- 添加班级弹出层end ----------------->
+
+        <!----------------- 修改班级弹出层start ----------------->
+        <form class="layui-form layuimini-form" id="editform" lay-filter="editform" style="display: none;margin: 10px 70px 0 5px;">
+            <input type="hidden" name="id" class="layui-input">
+            <div class="layui-form-item">
+                <label class="layui-form-label required" style="width: 80px !important;">班级名称</label>
+                <div class="layui-input-block" style="margin-left: 110px !important">
+                    <input type="text" name="name" placeholder="请输入班级名称" class="layui-input" lay-verify="required">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width: 80px !important;">锁定年级</label>
+                <div class="layui-input-block" style="margin-left: 110px !important">
+                    <select name="grade_id">
+                        <option value="0">请选择年级</option>
+                        <{foreach $grade as $value}>
+                        <option value="<{$value['id']}>"><{$value['name']}></option>
+                        <{/foreach}>
+                    </select>
+                </div>
+            </div>
+            <a style="display: none;" id="editform_submit" lay-submit lay-filter="editform_submit"></a>
+        </form>
+        <!----------------- 修改班级弹出层end ----------------->
+    </div>
+</div>
+<script src="__STATIC__/layuimini/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+<script>
+    layui.use(['jquery', 'form', 'table', 'layer'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            table = layui.table,
+            layer = layui.layer;
+        var batch_delete = [];
+
+        table.render({
+            elem: '#currentTableId',
+            url: '<{:url("classeslist")}>',
+            toolbar: '#toolbarDemo',
+            defaultToolbar: [],
+            parseData: function(res){ //res 即为原始返回的数据
+                return {
+                    "code": res.code, //解析接口状态
+                    "message": res.message, //解析提示文本
+                    "count": res.total, //解析数据长度
+                    "data": res.data //解析数据列表
+                };
+            },
+            cols: [[
+                {type: "checkbox", width: 50, fixed: "left"},
+                {field: 'name', width: 80, title: '班级名称'},
+                {field: 'grade_id', width: 80, title: '年级名称'},
+                {title: '操作', minWidth: 50, templet: '#currentTableBar', fixed: "right", align: "center"}
+            ]],
+            limits: [10, 15, 20, 25, 50, 100],
+            limit: 15,
+            page: true
+        });
+
+        // 搜索操作
+        $('#search').click(function(d) {
+            var param = {
+                name: $('#s_name').val(),
+                grade_id: $('#s_grade').val()
+            };
+            table.reload('currentTableId', {
+                where: param
+            }); //表格重载
+        });
+
+        /**
+         * toolbar监听事件
+         */
+        table.on('toolbar(currentTableFilter)', function (obj) {
+            if (obj.event === 'add') {  // 监听添加操作
+                $('#addform')[0].reset();
+                form.render(); //更新渲染
+
+                layer.open({
+                    btn: ['提交', '关闭'],
+                    title: '添加班级',
+                    type: 1,
+                    shade: 0.2,
+                    shadeClose: true,
+                    area: ['500px', '300px'],
+                    content: $('#addform'),
+                    yes: function(index, layero) {
+                        $('#addform_submit').click();
+                    }
+                });
+            } else if (obj.event === 'delete') {  // 监听删除操作
+                var checkStatus = table.checkStatus('currentTableId'); //获取选中数据
+                var str = '';
+                batch_delete = [];
+                $.each(checkStatus.data, function(i, item) {
+                    batch_delete.push(item.id);
+                    str += item.name+",";
+                });
+                str = str.substring(0,str.length-1);
+                layer.confirm('是否删除班级：'+str, function (index) {
+                    deleted(batch_delete);
+                    layer.close(index);
+                });
+            }
+        });
+
+        /**
+         *  行操作事件
+         */
+        table.on('tool(currentTableFilter)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'edit') {
+                form.val("editform", {
+                    "id": data.id,
+                    "name": data.name,
+                    "grade_id": data.grade_id
+                });
+                form.render(); //更新渲染
+                layer.open({
+                    btn: ['提交', '关闭'],
+                    title: '修改班级',
+                    type: 1,
+                    shade: 0.2,
+                    shadeClose: true,
+                    area: ['500px', '300px'],
+                    content: $('#editform'),
+                    yes: function(index, layero) {
+                        $('#editform_submit').click();
+                    }
+                });
+            } else if (obj.event === 'delete') {
+                batch_delete = [data.id];
+                layer.confirm('是否删除班级：'+data.name, function (index) {
+                    deleted(batch_delete);
+                    layer.close(index);
+                });
+            }
+        });
+
+        /**
+         * 添加方法
+         */
+        form.on('submit(addform_submit)', function(data) {
+            $.ajax({
+                url: '<{:url("classesadd")}>',
+                type: 'post',
+                headers:{
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: data.field,
+                success: function(res) {
+                    $('meta[name="csrf-token"]').attr('content', res.token); //刷新令牌
+                    if(res.code < 0) {
+                        layer.msg('操作失败');
+                    }else {
+                        layer.msg('操作成功');
+                        table.reload('currentTableId'); //表格重载
+                        layer.closeAll();
+                    }
+                },
+                error: function(err) {
+                    layer.msg(err.statusText);
+                }
+            });
+            return false;
+        });
+
+        /**
+         * 修改方法
+         */
+        form.on('submit(editform_submit)', function(data) {
+            $.ajax({
+                url: '<{:url("classesupdate")}>',
+                type: 'post',
+                headers:{
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: data.field,
+                success: function(res) {
+                    $('meta[name="csrf-token"]').attr('content', res.token); //刷新令牌
+                    if(res.code < 0) {
+                        layer.msg('操作失败');
+                    }else {
+                        layer.msg('操作成功');
+                        table.reload('currentTableId'); //表格重载
+                        layer.closeAll();
+                    }
+                },
+                error: function(err) {
+                    layer.msg(err.statusText);
+                }
+            });
+            return false;
+        });
+
+        //删除方法
+        var deleted = function(id) {
+            if(id.length <= 0) {
+                layer.msg('请选中班级进行删除');
+                return;
+            }
+            var param = {
+                id: id
+            };
+            $.ajax({
+                url: '<{:url("classesdelete")}>',
+                type: 'post',
+                data: param,
+                success: function(res) {
+                    if(res.code < 0) {
+                        layer.msg('操作失败');
+                    }else {
+                        layer.msg('操作成功');
+                        table.reload('currentTableId'); //表格重载
+                    }
+                },
+                error: function(err) {
+                    layer.msg(err.statusText);
+                }
+            });
+        };
+    });
+</script>
+<script>
+
+</script>
+
+</body>
+</html>
