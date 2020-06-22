@@ -2,32 +2,22 @@
 /**
  * Created by PhpStorm.
  * User: Administrator
- * Date: 2020/6/9
- * Time: 18:06
+ * Date: 2020/6/16
+ * Time: 11:46
  */
 
-namespace app\model\Course;
+namespace app\model\Semester;
 
 
-use app\model\GradeClass\Grade;
 use think\Model;
-use think\model\concern\SoftDelete;
 
-class Course extends Model
+class Semester extends Model
 {
-    use SoftDelete;
-
-    protected $table = 'course';
+    protected $table = 'semester';
     protected $pk = 'id';
     protected $createTime = 'create_time'; //创建时间字段名
     protected $updateTime = 'update_time'; //更新时间字段名
     protected $autoWriteTimestamp = 'timestamp'; //自动写入创建时间和更新时间
-    protected $deleteTime = 'deleted_time'; //软删除字段，规定是时间类型
-
-    public function grades()
-    {
-        return $this->hasOne(Grade::class, 'id', 'grade_id');
-    }
 
     /**
      * where条件
@@ -40,9 +30,6 @@ class Course extends Model
         $where = [];
         foreach($option as $key=>$item) {
             switch($key) {
-                case $alias.'course_no':
-                    $where[] = [$alias.$key,'=',$item];
-                    break;
                 case $alias.'name':
                     $where[] = [$alias.$key,'=',$item];
                     break;
@@ -54,8 +41,8 @@ class Course extends Model
         return $where;
     }
 
-    public function getCourse($filed = '*', $where = [])
+    public function getSemester($field = '*', $where = [])
     {
-        return $this->field($filed)->where($where)->select();
+        return $this->field($field)->where($where)->select();
     }
 }

@@ -108,6 +108,23 @@ Route::group('/', function() {
     Route::post('classesdelete', 'ClassesController/deleteClasses')->name('classesdelete'); //删除班级
    /******************* 班级设置end ********************/
 
+   /******************* 学期设置start ********************/
+    Route::get('semester', 'SemesterController/index')->name('semester'); //学期设置
+    Route::get('semesterlist', 'SemesterController/queryList')->name('semesterlist'); //学期设置
+    Route::post('semesteradd', 'SemesterController/addSemester')->name('semesteradd')->token('__semestertoken__'); //添加学期
+   /******************* 学期设置end ********************/
+
+   /******************* 快捷排课设置start ********************/
+    Route::get('fast', 'CourseController/index_fast')->name('fast'); //排课管理
+    Route::post('fastadd', 'CourseController/addFast')->name('fastadd')->token('__fasttoken__'); //批量添加排课
+   /******************* 快捷排课设置end ********************/
+
+   /******************* 排课管理start ********************/
+    Route::get('schedule', 'CourseController/index_schedule')->name('schedule'); //排课管理
+    Route::get('schedulelist', 'CourseController/queryList_schedule')->name('schedulelist'); //排课管理
+    Route::post('scheduleupdate', 'CourseController/updateSchedule')->name('scheduleupdate')->token('__scheduletoken__'); //排课修改
+   /******************* 排课管理end ********************/
+
    Route::get('auth', 'AuthController/getMenus')->name('auth'); //获取权限
    Route::post('updatepassword', 'LoginController/updatePassword')->name('updatepassword'); //首页修改密码
 })->middleware(AuthPermission::class);
