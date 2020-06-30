@@ -31,7 +31,7 @@ class CreateTeacher extends Migrator
         $table = $this->table('teacher', array('engine'=>'InnoDB'));
         $table->addColumn('name', 'string', array('length'=>10, 'default'=>'', 'null'=>false, 'comment'=>'姓名'))
             ->addColumn('sex', 'integer', array('length'=>1, 'default'=> 0, 'null'=>false, 'comment'=>'性别  0:男  1:女'))
-            ->addColumn('birthday', 'timestamp', array('default'=>'0000-00-00 00:00:00', 'null'=>false, 'comment'=>'生日'))
+            ->addColumn('birthday', 'timestamp', array('null'=>false, 'comment'=>'生日'))
             ->addColumn('teacher_no', 'string', array('length'=>50, 'default'=>'', 'null'=>false, 'comment'=>'教师编号'))
             ->addColumn('address', 'string', array('length'=>250, 'default'=>'', 'null'=>false, 'comment'=>'家庭住址'))
             ->addColumn('phone', 'string', array('length'=>11, 'default'=>'', 'null'=>false, 'comment'=>'手机号码'))
