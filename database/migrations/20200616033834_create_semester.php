@@ -32,7 +32,7 @@ class CreateSemester extends Migrator
         $table->addColumn('name', 'string', array('length'=>10, 'default'=>'', 'null'=>false, 'comment'=>'学期名称'))
             ->addColumn('start_time', 'string', array('length'=>50, 'default'=>'', 'null'=>false, 'comment'=>'学期开始时间戳'))
             ->addColumn('end_time', 'string', array('length'=>50, 'default'=>'', 'null'=>false, 'comment'=>'学期结束时间戳'))
-            ->addColumn('schedule_status', 'int', array('length'=>1, 'default'=>0, 'null'=>false, 'comment'=>'是否排课 0未排课 1已排课'))
+            ->addColumn('schedule_status', 'integer', array('length'=>1, 'default'=>0, 'null'=>false, 'comment'=>'是否排课 0未排课 1已排课'))
             ->addColumn('create_account', 'string', array('length'=>50, 'default'=>'', 'null'=>false, 'comment'=>'创建人账号'))
             ->addColumn('create_name', 'string', array('length'=>50, 'default'=>'', 'null'=>false, 'comment'=>'创建人'))
             ->addTimestamps()
