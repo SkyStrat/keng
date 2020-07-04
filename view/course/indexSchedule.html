@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>layui</title>
+    <meta name="csrf-token" content="<{:token('__scheduletoken__')}>">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="__STATIC__/layuimini/lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="__STATIC__/fullcalendar/core/main.css" media="all" />
+    <link rel="stylesheet" href="__STATIC__/fullcalendar/daygrid/main.css" media="all" />
+    <link rel="stylesheet" href="__STATIC__/layuimini/css/public.css" media="all">
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+
+        <div id="calendar"></div>
+
+        <!----------------- 修改排课start ----------------->
+        <form class="layui-form layuimini-form" id="addform" lay-filter="addform" style="margin: 10px 5px 0 5px;display: none;">
+            <input type="hidden" name="id" value="" />
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width: 80px !important;">课程</label>
+                <div class="layui-input-block" style="margin-left: 110px !important;width: 285px;">
+                    <select name="course" id="course_id">
+                        <option value="">请选择课程</option>
+                    </select>
+                </div>
+            </div>
+            <div style="text-align: center;margin-top: 30px;">
+                <a class="layui-btn" id="addform_submit" lay-submit lay-filter="addform_submit">调课</a>
+                <a class="layui-btn" id="updateform_submit" lay-submit lay-filter="updateform_submit">自修</a>
+            </div>
+        </form>
+        <!----------------- 修改排课end ----------------->
+    </div>
+</div>
+<script src="__STATIC__/layuimini/lib/layui-v2.5.5/layui.all.js" charset="utf-8"></script>
+<script src="__STATIC__/fullcalendar/core/main.js" charset="utf-8"></script>
+<script src="__STATIC__/fullcalendar/daygrid/main.js" charset="utf-8"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var layer = layui.layer,
+            form = layui.form,
+            $ = layui.jquery;
+        var course = JSON.parse('<{$course}>');
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            plugins: ['dayGrid'],
+            locale: 'zh-cn',
+            editable: true,
+            eventLimit: true,
+            eventClick: function(info) {
+                showSelectData(info.event.extendedProps.grade_id); //输出课程option数据
+                form.val("addform", {
+                    "course" : info.event.extendedProps.course_id+'-'+info.event.extendedProps.course_name,
+                    "id": info.event.id
+                });
+                layer.open({
+                    title: '修改排课',
+                    type: 1,
+                    shade: 0.2,
+                    shadeClose: true,
+                    area: ['500px', '200px'],
+                    content: $('#addform'),
+                });
+            },
+            events: {
+                url: '/schedulelist',
+                failure: function(res) {
+                    layer.msg(res.message);
+                }
+            }
+        });
+        calendar.render();
+
+        //调课
+        form.on('submit(addform_submit)', function(data){
+            data.field.type = 'transfer';
+            if(data.field.course == '' || data.field.course == null) {
+                layer.msg('请选择课程');
+                return false;
+            }
+
+            $.ajax({
+                url: '<{:url("scheduleupdate")}>',
+                type: 'post',
+                data: data.field,
+                headers:{
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success:function(res) {
+                    $('meta[name="csrf-token"]').attr('content', res.token); //刷新令牌
+                    if(res.code < 0) {
+                        layer.msg('操作失败');
+                    }else {
+                        calendar.refetchEvents();
+                        layer.msg('操作成功');
+                        layer.closeAll();
+                    }
+                },
+                error:function(err) {
+                    layer.msg(err.statusText)
+                }
+            });
+
+            return false;
+        });
+        //自修
+        form.on('submit(updateform_submit)', function(data){
+            data.field.type = 'selfStudy';
+            $.ajax({
+                url: '<{:url("scheduleupdate")}>',
+                type: 'post',
+                data: data.field,
+                headers:{
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success:function(res) {
+                    $('meta[name="csrf-token"]').attr('content', res.token); //刷新令牌
+                    if(res.code < 0) {
+                        layer.msg('操作失败');
+                    }else {
+                        calendar.refetchEvents();
+                        layer.msg('操作成功');
+                        layer.closeAll();
+                    }
+                },
+                error:function(err) {
+                    layer.msg(err.statusText)
+                }
+            });
+            return false;
+        });
+
+        function showSelectData(_gradeid) {
+            var html = '<option value="">请选择课程</option>';
+            $.each(course, function(i,item) {
+                if(item.grade_id == _gradeid) {
+                    html = html + '<option value="'+item.id+'-'+item.name+'">'+item.name+'</option>'
+                }
+            });
+            document.getElementById("course_id").innerHTML = html;
+            form.render('select');
+        }
+    });
+
+    /**
+     * {
+                url: '/schedulelist',
+                failure: function(res) {
+                    console.log(res);
+                }
+            }
+     */
+</script>
+<script>
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>layui</title>
+    <meta name="csrf-token" content="<{:token('__fasttoken__')}>">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="__STATIC__/layuimini/lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="__STATIC__/layuimini/css/public.css" media="all">
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <!----------------- 添加排课start ----------------->
+        <form class="layui-form layuimini-form" id="addform" lay-filter="addform" style="margin: 10px 70px 0 5px;">
+            <div class="layui-form-item">
+                <label class="layui-form-label required" style="width: 80px !important;">年级</label>
+                <div class="layui-input-block" style="margin-left: 110px !important">
+                    <select name="grade" lay-verify="required" lay-filter="grade_select">
+                        <option value="">请选择年级</option>
+                        <{foreach $grade as $value}>
+                        <option value="<{$value['id']}>-<{$value['name']}>"><{$value['name']}></option>
+                        <{/foreach}>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required" style="width: 80px !important;">班级</label>
+                <div class="layui-input-block" style="margin-left: 110px !important">
+                    <select name="classes" lay-verify="required" id="classes_id">
+                        <option value="">请选择班级</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required" style="width: 80px !important;">课程</label>
+                <div class="layui-input-block" style="margin-left: 110px !important">
+                    <select name="course" lay-verify="required" id="course_id">
+                        <option value="">请选择课程</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required" style="width: 80px !important;">学期</label>
+                <div class="layui-input-block" style="margin-left: 110px !important">
+                    <select name="semester" lay-verify="required">
+                        <option value="">请选择学期</option>
+                        <{foreach $semester as $value}>
+                        <option value="<{$value['start_time']}>-<{$value['end_time']}>"><{$value['name']}></option>
+                        <{/foreach}>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required" style="width: 80px !important;">一周选择</label>
+                <div class="layui-input-block" style="margin-left: 110px !important">
+                    <select name="weekday" lay-verify="required">
+                        <option value="1" selected>周一</option>
+                        <option value="2">周二</option>
+                        <option value="3">周三</option>
+                        <option value="4">周四</option>
+                        <option value="5">周五</option>
+                        <option value="6">周六</option>
+                        <option value="7">周日</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required" style="width: 80px !important;">上课时间</label>
+                <div class="layui-input-block" style="margin-left: 110px !important">
+                    <input type="text" id="begin" name="begin_time" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required" style="width: 80px !important;">下课时间</label>
+                <div class="layui-input-block" style="margin-left: 110px !important">
+                    <input type="text" id="after" name="after_time" class="layui-input">
+                </div>
+            </div>
+            <a class="layui-btn" id="addform_submit" lay-submit lay-filter="addform_submit">批量添加</a>
+        </form>
+        <!----------------- 添加排课end ----------------->
+    </div>
+</div>
+<script src="__STATIC__/layuimini/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+<script>
+    layui.use(['jquery', 'form', 'layer', 'laydate'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            layer = layui.layer,
+            laydate = layui.laydate;
+        var classes_list = JSON.parse('<{$classes}>');
+        var course_list = JSON.parse('<{$course}>');
+
+        laydate.render({
+            elem: '#begin', //指定元素
+            type: 'time'
+        });
+        laydate.render({
+            elem: '#after', //指定元素
+            type: 'time'
+        });
+
+        form.on('select(grade_select)', function(data) {
+            var html = '<option value="">请选择班级</option>';
+            var html_course = '<option value="">请选择课程</option>';
+            html_course += '<option value="-1">自修</option>';
+            var id = data.value.split("-")[0];
+            $.each(classes_list, function(i,item) {
+                if(item['grade_id'] == id) {
+                    html += '<option value="'+item['id']+'-'+item['name']+'">'+item['name']+'</option>';
+                }
+            });
+            $.each(course_list, function(i,item) {
+                if(item['grade_id'] == id) {
+                    html_course += '<option value="'+item['id']+'-'+item['name']+'">'+item['name']+'</option>';
+                }
+            });
+            document.getElementById('classes_id').innerHTML = html;
+            document.getElementById('course_id').innerHTML = html_course;
+            form.render('select');
+        });
+
+        /**
+         * 添加方法
+         */
+        form.on('submit(addform_submit)', function(data) {
+            $.ajax({
+                url: '<{:url("fastadd")}>',
+                type: 'post',
+                headers:{
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: data.field,
+                success: function(res) {
+                    $('meta[name="csrf-token"]').attr('content', res.token); //刷新令牌
+                    if(res.code < 0) {
+                        layer.msg('操作失败');
+                    }else {
+                        layer.msg('操作成功');
+                        layer.closeAll();
+                    }
+                },
+                error: function(err) {
+                    layer.msg(err.statusText);
+                }
+            });
+            return false;
+        });
+    });
+</script>
+<script>
+
+</script>
+
+</body>
+</html>
