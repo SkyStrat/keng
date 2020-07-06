@@ -19,6 +19,6 @@ class NotifyController extends Controller
 
     public function index()
     {
-        print_r(111);
+         return $this->app->view->fetch('notify/index');
     }
 }
